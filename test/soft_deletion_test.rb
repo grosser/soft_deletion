@@ -3,6 +3,7 @@ require 'test/unit'
 require 'test/unit/ui/console/testrunner'
 require 'test/unit/active_support'
 require 'active_support/test_case'
+require 'mocha'
 
 class SoftDeletionTest < ActiveSupport::TestCase
   def test_xxx
