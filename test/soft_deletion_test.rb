@@ -5,7 +5,7 @@ require 'test/unit/active_support'
 require 'active_support/test_case'
 require 'mocha'
 
-class SoftDeletionTest < ActiveSupport::TestCase
+class SoftDeletionTest < Test::Unit::TestCase
   def test_xxx
     assert_equal 1, 1
   end
