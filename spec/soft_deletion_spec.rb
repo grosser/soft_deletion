@@ -9,10 +9,12 @@ describe SoftDeletion do
       end
 
       it "should mark itself as deleted" do
+        @category.reload
         @category.should be_deleted
       end
 
       it "should soft delete its dependent associations" do
+        @forum.reload
         @forum.should be_deleted
       end
     end
@@ -25,10 +27,12 @@ describe SoftDeletion do
       end
 
       it "should mark itself as deleted" do
+        @category.reload
         @category.should be_deleted
       end
 
       it "should soft delete its dependent associations" do
+        @forum.reload
         @forum.should be_deleted
       end
     end
@@ -106,6 +110,7 @@ describe SoftDeletion do
       category = NACategory.create!
       category.soft_delete!
 
+      category.reload
       category.should be_deleted
     end
   end
@@ -116,6 +121,7 @@ describe SoftDeletion do
       forum = category.forums.create!
       category.soft_delete!
 
+      forum.reload
       forum.should be_deleted
     end
   end
@@ -142,6 +148,7 @@ describe SoftDeletion do
       end
 
       it "should mark itself as deleted" do
+        @category.reload
         @category.should be_deleted
       end
 
@@ -164,10 +171,12 @@ describe SoftDeletion do
       end
 
       it "should not mark itself as deleted" do
+        @category.reload
         @category.should_not be_deleted
       end
 
       it "should not soft delete its dependent associations" do
+        @forum.reload
         @forum.should_not be_deleted
       end
     end
@@ -181,15 +190,16 @@ describe SoftDeletion do
         Category.with_deleted do
           @category.reload
           @category.soft_undelete!
-          @category.reload
         end
       end
 
       it "should not mark itself as deleted" do
+        @category.reload
         @category.should_not be_deleted
       end
 
       it "should restore its dependent associations" do
+        @forum.reload
         @forum.should_not be_deleted
       end
     end
@@ -201,6 +211,7 @@ describe SoftDeletion do
       forum = category.forums.create!
       category.soft_delete!
 
+      forum.reload
       forum.should be_deleted
       #forum.category_id.should be_nil # TODO
     end
@@ -226,6 +237,7 @@ describe SoftDeletion do
 
       it "should delete all models" do
         @categories.each do |category|
+          category.reload
           category.should be_deleted
         end
       end
@@ -238,6 +250,7 @@ describe SoftDeletion do
 
       it "should delete all models" do
         @categories.each do |category|
+          category.reload
           category.should be_deleted
         end
       end
@@ -270,6 +283,7 @@ describe SoftDeletion do
         forum.soft_delete!
       end.to raise_error(ActiveRecord::RecordInvalid)
 
+      forum.reload
       forum.should_not be_deleted
     end
 
@@ -277,6 +291,7 @@ describe SoftDeletion do
       forum = ValidatedForum.create!(:category_id => 1)
       forum.soft_delete!
 
+      forum.reload
       forum.should be_deleted
     end
   end
@@ -286,6 +301,7 @@ describe SoftDeletion do
       forum = ValidatedForum.create!(:category_id => 1)
 
       forum.soft_delete.should be_true
+      forum.reload
       forum.should be_deleted
     end
 
@@ -294,6 +310,7 @@ describe SoftDeletion do
       forum.category_id = nil
 
       forum.soft_delete.should be_false
+      forum.reload
       forum.should_not be_deleted
     end
 
@@ -303,6 +320,7 @@ describe SoftDeletion do
       skip_validations = (ActiveRecord::VERSION::MAJOR == 2 ? false : {:validate => false})
 
       forum.soft_delete(skip_validations).should be_true
+      forum.reload
       forum.should be_deleted
     end
   end
