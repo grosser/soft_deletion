@@ -9,3 +9,4 @@ gem 'shoulda'
 gem 'mocha'
 gem 'sqlite3'
 gem 'test-unit', '2.2' # >2.2 does not show dots
+gem 'rspec'
