@@ -1,8 +1,25 @@
-require 'active_support/test_case'
-require 'shoulda'
 require 'active_record'
+require 'soft_deletion'
+require 'database_cleaner'
+require 'logger'
 
-ENV['EMACS'] = 't' # colors for test-unit < 2.4.9
+# ActiveRecord::Base.logger = Logger.new(STDOUT) # for easier debugging
+
+RSpec.configure do |config|
+  config.before(:suite) do
+    # would be nicer to use transaction, but Rails 2 does not open a new transaction or savepoint
+    # when already inside a transaction
+    DatabaseCleaner.strategy = :truncation
+  end
+
+  config.before do
+    DatabaseCleaner.start
+  end
+
+  config.after do
+    DatabaseCleaner.clean
+  end
+end
 
 def clear_callbacks(model, callback)
   if ActiveRecord::VERSION::MAJOR > 2
@@ -47,7 +64,6 @@ class ActiveRecord::Base
 end
 
 # setup models
-require 'soft_deletion'
 
 class Forum < ActiveRecord::Base
   include SoftDeletion

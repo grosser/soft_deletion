@@ -1,13 +1,12 @@
 require 'appraisal'
 require 'bundler/gem_tasks'
+require 'rspec/core/rake_task'
 
 task :default do
-  sh "bundle exec rake appraisal:install && bundle exec rake appraisal test"
+  sh "bundle exec rake appraisal:install && bundle exec rake appraisal spec"
 end
 
-task :test do
-  sh "ruby -Itest test/soft_deletion_test.rb"
-end
+RSpec::Core::RakeTask.new(:spec)
 
 # extracted from https://github.com/grosser/project_template
 rule /^version:bump:.*/ do |t|

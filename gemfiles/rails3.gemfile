@@ -4,10 +4,9 @@ source :rubygems
 
 gem "appraisal"
 gem "rake"
-gem "shoulda"
-gem "mocha"
 gem "sqlite3"
-gem "test-unit", "2.2"
+gem "rspec"
+gem "database_cleaner"
 gem "activerecord", "3.2.3"
 gem "activesupport", "3.2.3"
 
