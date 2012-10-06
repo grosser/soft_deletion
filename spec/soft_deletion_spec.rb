@@ -330,7 +330,7 @@ describe SoftDeletion do
 
         include SoftDeletion
       end
-      ClassForScopeTest1.scope_attributes.has_key?(:deleted_at).should be_false
+      ClassForScopeTest1.scope_attributes.eql?(deleted_at: nil).should be_false
     end
 
     describe ".use_default_soft_delete_scope" do
@@ -341,7 +341,7 @@ describe SoftDeletion do
           include SoftDeletion
           use_default_soft_delete_scope
         end
-        ClassForScopeTest2.scope_attributes.has_key?(:deleted_at).should be_true
+        ClassForScopeTest2.scope_attributes.eql?(deleted_at: nil).should be_true
       end
 
       it "should accept a hash which provides more conditions on default scope" do
@@ -351,8 +351,7 @@ describe SoftDeletion do
           include SoftDeletion
           use_default_soft_delete_scope(:category_id => 1)
         end
-        ClassForScopeTest3.scope_attributes.has_key?(:deleted_at).should be_true
-        ClassForScopeTest3.scope_attributes.has_key?(:category_id).should be_true
+        ClassForScopeTest3.scope_attributes.eql?(deleted_at: nil, category_id: 1).should be_true
       end
 
     end
@@ -364,7 +363,6 @@ describe SoftDeletion do
           Category.deleted.should be_empty
 
           category.soft_delete!
-          Category.deleted.should_not be_empty
           Category.deleted.last.should == category
 
           category.soft_undelete!
@@ -375,14 +373,12 @@ describe SoftDeletion do
       describe "not_deleted" do
         it "should only return non soft_deleted records" do
           category = Category.create!
-          Category.not_deleted.should_not be_empty
           Category.not_deleted.last.should == category
 
           category.soft_delete!
           Category.not_deleted.should be_empty
 
           category.soft_undelete!
-          Category.not_deleted.should_not be_empty
           Category.not_deleted.last.should == category
         end
       end
