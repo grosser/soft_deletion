@@ -10,3 +10,5 @@ gem 'rake'
 gem 'sqlite3'
 # Tesing Framework
 gem 'rspec'
+# Cleaning DB after each test
+gem 'database_cleaner'
