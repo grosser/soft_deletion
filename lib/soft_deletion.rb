@@ -3,17 +3,17 @@ require 'soft_deletion/version'
 require 'soft_deletion/dependency'
 
 module SoftDeletion
-  def self.included(base)
+  extend ActiveSupport::Concern
+
+  included do |base|
     unless base.ancestors.include?(ActiveRecord::Base)
       raise "You can only include this if #{base} extends ActiveRecord::Base"
     end
     base.extend(ClassMethods)
 
     # Some named scope
-    base.class_eval do
-      scope :deleted,     where("#{self.quoted_table_name}.deleted_at IS NOT NULL")
-      scope :not_deleted, where(deleted_at: nil)
-    end
+    scope :deleted,     where("#{self.quoted_table_name}.deleted_at IS NOT NULL")
+    scope :not_deleted, where(deleted_at: nil)
 
     # backport after_soft_delete so we can safely upgrade to rails 3
     if ActiveRecord::VERSION::MAJOR > 2
