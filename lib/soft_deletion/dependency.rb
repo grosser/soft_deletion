@@ -20,9 +20,7 @@ module SoftDeletion
     def soft_undelete!
       return unless can_soft_delete?
 
-      klass.with_deleted do
-        dependencies.each(&:soft_undelete!)
-      end
+      dependencies.each(&:soft_undelete!)
     end
 
     protected

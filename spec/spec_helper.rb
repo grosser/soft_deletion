@@ -1,8 +1,24 @@
-require 'active_support/test_case'
-require 'shoulda'
-require 'active_record'
+$LOAD_PATH.unshift(File.dirname(__FILE__))
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
-ENV['EMACS'] = 't' # colors for test-unit < 2.4.9
+require 'active_record'
+require 'soft_deletion'
+
+require 'database_cleaner'
+
+RSpec.configure do |config|
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  config.before(:each) do
+    DatabaseCleaner.start
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
+end
 
 def clear_callbacks(model, callback)
   if ActiveRecord::VERSION::MAJOR > 2
@@ -47,7 +63,6 @@ class ActiveRecord::Base
 end
 
 # setup models
-require 'soft_deletion'
 
 class Forum < ActiveRecord::Base
   include SoftDeletion
@@ -119,9 +134,7 @@ end
 class Cat1Forum < ActiveRecord::Base
   silent_set_table_name 'forums'
 
-  def self.define_default_soft_delete_scope
-    default_scope :conditions => {:category_id => 1}
-  end
+  default_scope :conditions => {:category_id => 1}
 
   include SoftDeletion
   belongs_to :category
