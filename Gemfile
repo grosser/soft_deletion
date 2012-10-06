@@ -1,11 +1,12 @@
 source :rubygems
 gemspec
 
-gem 'appraisal'
+# Rails
 gem 'activerecord'
 gem 'activesupport'
+# Rake
 gem 'rake'
-gem 'shoulda'
-gem 'mocha'
+# Testing DB
 gem 'sqlite3'
-gem 'test-unit', '2.2' # >2.2 does not show dots
+# Tesing Framework
+gem 'rspec'
