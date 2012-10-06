@@ -187,10 +187,8 @@ describe SoftDeletion do
     context "being restored from soft deletion" do
       before do
         @category.soft_delete!
-        Category.with_deleted do
-          @category.reload
-          @category.soft_undelete!
-        end
+        @category.reload
+        @category.soft_undelete!
       end
 
       it "should not mark itself as deleted" do
@@ -323,5 +321,72 @@ describe SoftDeletion do
       forum.reload
       forum.should be_deleted
     end
+  end
+
+  describe "scoping" do
+    it "should not define default scope when included" do
+      class ClassForScopeTest1 < ActiveRecord::Base
+        silent_set_table_name 'forums'
+
+        include SoftDeletion
+      end
+      ClassForScopeTest1.scope_attributes.has_key?(:deleted_at).should be_false
+    end
+
+    describe ".use_default_soft_delete_scope" do
+      it "should define default scope where deleted_at is nil" do
+        class ClassForScopeTest2 < ActiveRecord::Base
+          silent_set_table_name 'forums'
+
+          include SoftDeletion
+          use_default_soft_delete_scope
+        end
+        ClassForScopeTest2.scope_attributes.has_key?(:deleted_at).should be_true
+      end
+
+      it "should accept a hash which provides more conditions on default scope" do
+        class ClassForScopeTest3 < ActiveRecord::Base
+          silent_set_table_name 'forums'
+
+          include SoftDeletion
+          use_default_soft_delete_scope(:category_id => 1)
+        end
+        ClassForScopeTest3.scope_attributes.has_key?(:deleted_at).should be_true
+        ClassForScopeTest3.scope_attributes.has_key?(:category_id).should be_true
+      end
+
+    end
+
+    describe "named scopes" do
+      describe "deleted" do
+        it "should only return soft_deleted records" do
+          category = Category.create!
+          Category.deleted.should be_empty
+
+          category.soft_delete!
+          Category.deleted.should_not be_empty
+          Category.deleted.last.should == category
+
+          category.soft_undelete!
+          Category.deleted.should be_empty
+        end
+      end
+
+      describe "not_deleted" do
+        it "should only return non soft_deleted records" do
+          category = Category.create!
+          Category.not_deleted.should_not be_empty
+          Category.not_deleted.last.should == category
+
+          category.soft_delete!
+          Category.not_deleted.should be_empty
+
+          category.soft_undelete!
+          Category.not_deleted.should_not be_empty
+          Category.not_deleted.last.should == category
+        end
+      end
+    end
+
   end
 end

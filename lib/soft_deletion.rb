@@ -9,12 +9,10 @@ module SoftDeletion
     end
     base.extend(ClassMethods)
 
-    if base.respond_to?(:define_default_soft_delete_scope)
-      base.define_default_soft_delete_scope
-    elsif base.table_exists? && base.column_names.include?('deleted_at')
-      # Avoids a bad SQL request with versions of code without the column deleted_at (for example a migration prior to the migration
-      # that adds deleted_at)
-      base.send(:default_scope, :conditions => { :deleted_at => nil })
+    # Some named scope
+    base.class_eval do
+      scope :deleted,     where("#{self.quoted_table_name}.deleted_at IS NOT NULL")
+      scope :not_deleted, where(deleted_at: nil)
     end
 
     # backport after_soft_delete so we can safely upgrade to rails 3
@@ -36,16 +34,27 @@ module SoftDeletion
   end
 
   module ClassMethods
+    # This should be called in model if you want to use default scope to filter soft deleted record
+    # But notice that using default scope makes it impossible to access associations records soft deleted
+    # You can unscope it, but then it will return ALL records instead of records belonging to parent
+    #
+    # So just use conditions on association if you don't want to see soft deleted association:
+    # # has_many :comments, conditions: {deleted_at: nil}
+    #
+    # Default scope is not recommended for conditions, but it's ok for order since Rails has reorder method:
+    # http://apidock.com/rails/ActiveRecord/QueryMethods/reorder
+    def use_default_soft_delete_scope(extra_conditions={})
+      conditions = {deleted_at: nil}
+      # Merge extra conditions
+      conditions.merge!(extra_conditions)
+
+      default_scope conditions: conditions
+    end
+
     def soft_delete_dependents
       self.reflect_on_all_associations.
         select { |a| [:destroy, :delete_all, :nullify].include?(a.options[:dependent]) }.
         map(&:name)
-    end
-
-    def with_deleted
-      with_exclusive_scope do
-        yield self
-      end
     end
 
     def mark_as_soft_deleted_sql

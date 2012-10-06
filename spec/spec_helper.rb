@@ -1,3 +1,6 @@
+$LOAD_PATH.unshift(File.dirname(__FILE__))
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+
 require 'active_record'
 require 'soft_deletion'
 
@@ -118,9 +121,7 @@ end
 class Cat1Forum < ActiveRecord::Base
   silent_set_table_name 'forums'
 
-  def self.define_default_soft_delete_scope
-    default_scope :conditions => {:category_id => 1}
-  end
+  default_scope :conditions => {:category_id => 1}
 
   include SoftDeletion
   belongs_to :category
