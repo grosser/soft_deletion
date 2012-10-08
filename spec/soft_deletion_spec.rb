@@ -102,118 +102,116 @@ describe SoftDeletion do
   end
 
   describe "association handling" do
-    # empty?
-  end
+    context "without dependent associations" do
+      it "should only soft-delete itself" do
+        category = NACategory.create!
+        category.soft_delete!
 
-  context "without dependent associations" do
-    it "should only soft-delete itself" do
-      category = NACategory.create!
-      category.soft_delete!
-
-      category.reload
-      category.should be_deleted
-    end
-  end
-
-  context "with independent associations" do
-    it "should not delete associations" do
-      category = IDACategory.create!
-      forum = category.forums.create!
-      category.soft_delete!
-
-      forum.reload
-      forum.should be_deleted
-    end
-  end
-
-  context "with dependent has_one association" do
-    before do
-      @category = HOACategory.create!
-      @forum = @category.create_forum
+        category.reload
+        category.should be_deleted
+      end
     end
 
-    successfully_soft_deletes
-    successfully_bulk_soft_deletes
-  end
+    context "with independent associations" do
+      it "should not delete associations" do
+        category = IDACategory.create!
+        forum = category.forums.create!
+        category.soft_delete!
 
-  context "with dependent association that doesn't have soft deletion" do
-    before do
-      @category = DACategory.create!
-      @forum = @category.destroyable_forums.create!
+        forum.reload
+        forum.should be_deleted
+      end
     end
 
-    context "successfully soft deleted" do
+    context "with dependent has_one association" do
       before do
-        @category.soft_delete!
+        @category = HOACategory.create!
+        @forum = @category.create_forum
       end
 
-      it "should mark itself as deleted" do
-        @category.reload
-        @category.should be_deleted
-      end
-
-      it "should not destroy dependent association" do
-        DestroyableForum.exists?(@forum.id).should be_true
-      end
-    end
-  end
-
-  context "with dependent has_many associations" do
-    before do
-      @category = Category.create!
-      @forum = @category.forums.create!
+      successfully_soft_deletes
+      successfully_bulk_soft_deletes
     end
 
-    context "failing to soft delete" do
+    context "with dependent association that doesn't have soft deletion" do
       before do
-        @category.stub(:valid?).and_return(false)
-        expect{ @category.soft_delete! }.to raise_error(ActiveRecord::RecordInvalid)
+        @category = DACategory.create!
+        @forum = @category.destroyable_forums.create!
       end
 
-      it "should not mark itself as deleted" do
-        @category.reload
-        @category.should_not be_deleted
-      end
+      context "successfully soft deleted" do
+        before do
+          @category.soft_delete!
+        end
 
-      it "should not soft delete its dependent associations" do
-        @forum.reload
-        @forum.should_not be_deleted
-      end
-    end
-
-    successfully_soft_deletes
-    successfully_bulk_soft_deletes
-
-    context "being restored from soft deletion" do
-      before do
-        @category.soft_delete!
-        Category.with_deleted do
+        it "should mark itself as deleted" do
           @category.reload
-          @category.soft_undelete!
+          @category.should be_deleted
+        end
+
+        it "should not destroy dependent association" do
+          DestroyableForum.exists?(@forum.id).should be_true
+        end
+      end
+    end
+
+    context "with dependent has_many associations" do
+      before do
+        @category = Category.create!
+        @forum = @category.forums.create!
+      end
+
+      context "failing to soft delete" do
+        before do
+          @category.stub(:valid?).and_return(false)
+          expect{ @category.soft_delete! }.to raise_error(ActiveRecord::RecordInvalid)
+        end
+
+        it "should not mark itself as deleted" do
+          @category.reload
+          @category.should_not be_deleted
+        end
+
+        it "should not soft delete its dependent associations" do
+          @forum.reload
+          @forum.should_not be_deleted
         end
       end
 
-      it "should not mark itself as deleted" do
-        @category.reload
-        @category.should_not be_deleted
-      end
+      successfully_soft_deletes
+      successfully_bulk_soft_deletes
 
-      it "should restore its dependent associations" do
-        @forum.reload
-        @forum.should_not be_deleted
+      context "being restored from soft deletion" do
+        before do
+          @category.soft_delete!
+          Category.with_deleted do
+            @category.reload
+            @category.soft_undelete!
+          end
+        end
+
+        it "should not mark itself as deleted" do
+          @category.reload
+          @category.should_not be_deleted
+        end
+
+        it "should restore its dependent associations" do
+          @forum.reload
+          @forum.should_not be_deleted
+        end
       end
     end
-  end
 
-  context "a soft-deleted has-many category that nullifies forum references on delete" do
-    it "should nullify those references" do
-      category = NDACategory.create!
-      forum = category.forums.create!
-      category.soft_delete!
+    context "a soft-deleted has-many category that nullifies forum references on delete" do
+      it "should nullify those references" do
+        category = NDACategory.create!
+        forum = category.forums.create!
+        category.soft_delete!
 
-      forum.reload
-      forum.should be_deleted
-      #forum.category_id.should be_nil # TODO
+        forum.reload
+        forum.should be_deleted
+        #forum.category_id.should be_nil # TODO
+      end
     end
   end
 
@@ -225,7 +223,7 @@ describe SoftDeletion do
     end
   end
 
-  context ".soft_delete_all!" do
+  describe ".soft_delete_all!" do
     before do
       @categories = 2.times.map { Category.create! }
     end
@@ -257,7 +255,7 @@ describe SoftDeletion do
     end
   end
 
-  context "overwritten default scope" do
+  describe "overwritten default scope" do
     it "should find even with deleted_at" do
       forum = Cat1Forum.create(:deleted_at => Time.now)
 
@@ -274,7 +272,7 @@ describe SoftDeletion do
     end
   end
 
-  context "validations" do
+  describe "validations" do
     it "should fail when validations fail" do
       forum = ValidatedForum.create!(:category_id => 1)
       forum.category_id = nil
@@ -296,7 +294,7 @@ describe SoftDeletion do
     end
   end
 
-  context "#soft_delete" do
+  describe "#soft_delete" do
     it "should return true if it succeeds" do
       forum = ValidatedForum.create!(:category_id => 1)
 
