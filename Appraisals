@@ -5,7 +5,7 @@ appraise "rails2" do
 end
 
 appraise "rails3" do
-  version = "3.2.3"
+  version = "3.2.8"
   gem 'activerecord', version
   gem 'activesupport', version
 end

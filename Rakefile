@@ -1,12 +1,13 @@
-require 'appraisal'
 require 'bundler/gem_tasks'
+require 'appraisal'
+require 'rspec/core/rake_task'
 
-task :default do
-  sh "bundle exec rake appraisal:install && bundle exec rake appraisal test"
-end
+RSpec::Core::RakeTask.new('spec')
 
-task :test do
-  sh "ruby -Itest test/soft_deletion_test.rb"
+# Set default rake task as running spec
+desc "Default: Run all specs and cucumber features under all supported Rails versions."
+task :default => ["appraisal:install"] do
+  exec('rake appraisal spec')
 end
 
 # extracted from https://github.com/grosser/project_template

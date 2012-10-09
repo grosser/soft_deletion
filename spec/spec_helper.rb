@@ -1,8 +1,20 @@
-require 'active_support/test_case'
-require 'shoulda'
 require 'active_record'
+require 'soft_deletion'
+require 'database_cleaner'
 
-ENV['EMACS'] = 't' # colors for test-unit < 2.4.9
+RSpec.configure do |config|
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  config.before(:each) do
+    DatabaseCleaner.start
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
+end
 
 def clear_callbacks(model, callback)
   if ActiveRecord::VERSION::MAJOR > 2
@@ -47,7 +59,6 @@ class ActiveRecord::Base
 end
 
 # setup models
-require 'soft_deletion'
 
 class Forum < ActiveRecord::Base
   include SoftDeletion

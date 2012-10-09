@@ -2,13 +2,12 @@
 
 source :rubygems
 
-gem "appraisal"
 gem "rake"
-gem "shoulda"
-gem "mocha"
 gem "sqlite3"
-gem "test-unit", "2.2"
-gem "activerecord", "3.2.3"
-gem "activesupport", "3.2.3"
+gem "rspec"
+gem "database_cleaner"
+gem "appraisal"
+gem "activerecord", "3.2.8"
+gem "activesupport", "3.2.8"
 
 gemspec :path=>"../"
