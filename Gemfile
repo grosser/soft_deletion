@@ -12,3 +12,5 @@ gem 'sqlite3'
 gem 'rspec'
 # Cleaning DB after each test
 gem 'database_cleaner'
+# Multi version test
+gem 'appraisal'

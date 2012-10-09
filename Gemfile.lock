@@ -17,6 +17,9 @@ GEM
     activesupport (3.2.7)
       i18n (~> 0.6)
       multi_json (~> 1.0)
+    appraisal (0.4.1)
+      bundler
+      rake
     arel (3.0.2)
     builder (3.0.0)
     database_cleaner (0.8.0)
@@ -41,6 +44,7 @@ PLATFORMS
 DEPENDENCIES
   activerecord
   activesupport
+  appraisal
   database_cleaner
   rake
   rspec

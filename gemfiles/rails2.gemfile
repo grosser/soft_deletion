@@ -2,12 +2,11 @@
 
 source :rubygems
 
-gem "appraisal"
 gem "rake"
-gem "shoulda"
-gem "mocha"
 gem "sqlite3"
-gem "test-unit", "2.2"
+gem "rspec"
+gem "database_cleaner"
+gem "appraisal"
 gem "activerecord", "2.3.14"
 gem "activesupport", "2.3.14"
 
