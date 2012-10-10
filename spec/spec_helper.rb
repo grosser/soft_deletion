@@ -66,58 +66,71 @@ end
 # setup models
 
 class Forum < ActiveRecord::Base
-  include SoftDeletion
+  has_soft_deletion
+
   belongs_to :category
 end
 
 class ValidatedForum < ActiveRecord::Base
   silent_set_table_name 'forums'
-  include SoftDeletion
+
+  has_soft_deletion
+
   belongs_to :category
   validates_presence_of :category_id
 end
 
 class Category < ActiveRecord::Base
-  include SoftDeletion
+  has_soft_deletion
+
   has_many :forums, :dependent => :destroy
 end
 
 # No association
 class NACategory < ActiveRecord::Base
   silent_set_table_name 'categories'
-  include SoftDeletion
+
+  has_soft_deletion
 end
 
 # Independent association
 class IDACategory < ActiveRecord::Base
   silent_set_table_name 'categories'
-  include SoftDeletion
+
+  has_soft_deletion
+
   has_many :forums, :dependent => :destroy, :foreign_key => :category_id
 end
 
 # Nullified dependent association
 class NDACategory < ActiveRecord::Base
   silent_set_table_name 'categories'
-  include SoftDeletion
+
+  has_soft_deletion
+
   has_many :forums, :dependent => :destroy, :foreign_key => :category_id
 end
 
 # Has ome association
 class HOACategory < ActiveRecord::Base
   silent_set_table_name 'categories'
-  include SoftDeletion
+
+  has_soft_deletion
+
   has_one :forum, :dependent => :destroy, :foreign_key => :category_id
 end
 
 # Class without column deleted_at
 class OriginalCategory < ActiveRecord::Base
-  include SoftDeletion
+  has_soft_deletion
 end
 
 # Has many destroyable association
 class DACategory < ActiveRecord::Base
   silent_set_table_name 'categories'
-  include SoftDeletion
+
+  has_soft_deletion
+
   has_many :destroyable_forums, :dependent => :destroy, :foreign_key => :category_id
 end
 
@@ -128,18 +141,17 @@ end
 
 # test that it does not blow up when the table is not yet defined (e.g. in rake db:reset)
 class NoTable < ActiveRecord::Base
-  include SoftDeletion
+  has_soft_deletion
 end
 
 # Forum with other default scope
 class Cat1Forum < ActiveRecord::Base
   silent_set_table_name 'forums'
 
-  def self.define_default_soft_delete_scope
-    default_scope :conditions => {:category_id => 1}
-  end
+  has_soft_deletion
+  default_scope conditions: {category_id: 1}
 
-  include SoftDeletion
+
   belongs_to :category
 end
 

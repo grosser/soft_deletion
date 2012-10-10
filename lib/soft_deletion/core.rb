@@ -5,14 +5,6 @@ module SoftDeletion
     end
     base.extend(ClassMethods)
 
-    if base.respond_to?(:define_default_soft_delete_scope)
-      base.define_default_soft_delete_scope
-    elsif base.table_exists? && base.column_names.include?('deleted_at')
-      # Avoids a bad SQL request with versions of code without the column deleted_at (for example a migration prior to the migration
-      # that adds deleted_at)
-      base.send(:default_scope, :conditions => { :deleted_at => nil })
-    end
-
     # backport after_soft_delete so we can safely upgrade to rails 3
     if ActiveRecord::VERSION::MAJOR > 2
       base.define_callbacks :soft_delete
