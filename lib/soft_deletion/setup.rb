@@ -17,7 +17,7 @@ module SoftDeletion
       def has_soft_deletion(options={})
         default_options = {:default_scope => false}
 
-        include SoftDeletion
+        include SoftDeletion::Core
 
         options = default_options.merge(options)
 
