@@ -149,7 +149,7 @@ class Cat1Forum < ActiveRecord::Base
   silent_set_table_name 'forums'
 
   has_soft_deletion
-  default_scope conditions: {category_id: 1}
+  default_scope :conditions => {:category_id => 1}
 
 
   belongs_to :category
