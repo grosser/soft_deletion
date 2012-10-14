@@ -4,10 +4,6 @@ Not overwriting destroy or delete.
 Install
 =======
     gem install soft_deletion
-Or
-
-    rails plugin install git://github.com/grosser/soft_deletion.git
-
 
 Usage
 =====
