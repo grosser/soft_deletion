@@ -1,4 +1,4 @@
-Explicit soft deletion for ActiveRecord via deleted_at and default scope + callbacks.<br/>
+Explicit soft deletion for ActiveRecord via deleted_at + callbacks and optional default scope.<br/>
 Not overwriting destroy or delete.
 
 Install
@@ -7,9 +7,10 @@ Install
 
 Usage
 =====
-    # mix into any model ...
+    require 'soft_deletion'
+
     class User < ActiveRecord::Base
-      include SoftDeletion
+      has_soft_deletion :default_scope => true
 
       after_soft_delete :send_deletion_emails # Rails 2 + 3
       set_callback :soft_delete, :after, :prepare_emails # Rails 3
@@ -40,7 +41,7 @@ Usage
 
 TODO
 ====
- - Rails 3 from with inspiration from https://github.com/JackDanger/permanent_records/blob/master/lib/permanent_records.rb
+ - Rails 3 with inspiration from https://github.com/JackDanger/permanent_records/blob/master/lib/permanent_records.rb
  - maybe stuff from https://github.com/smoku/soft_delete
 
 Authors
