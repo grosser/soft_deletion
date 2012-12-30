@@ -76,6 +76,15 @@ describe SoftDeletion do
         Category.soft_delete_all!(category)
       end
 
+      it "is called with a block" do
+        Category.after_soft_delete{|c| c.foo }
+        category = Category.create!
+
+        category.should_receive(:foo)
+
+        category.soft_delete!
+      end
+
       it "should be call multiple after soft-deletion" do
         Category.after_soft_delete :foo, :bar
         category = Category.create!
