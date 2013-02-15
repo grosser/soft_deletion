@@ -38,12 +38,6 @@ Usage
     # soft delete many
     User.soft_delete_all!(1,2,3,4)
 
-
-TODO
-====
- - Rails 3 with inspiration from https://github.com/JackDanger/permanent_records/blob/master/lib/permanent_records.rb
- - maybe stuff from https://github.com/smoku/soft_delete
-
 Authors
 =======
 
@@ -55,4 +49,4 @@ Authors
 [Zendesk](http://zendesk.com)<br/>
 michael@grosser.it<br/>
 License: MIT<br/>
-[![Build Status](https://secure.travis-ci.org/grosser/soft_deletion.png)](http://travis-ci.org/grosser/soft_deletion)
+[![Build Status](https://travis-ci.org/grosser/soft_deletion.png)](https://travis-ci.org/grosser/soft_deletion)
