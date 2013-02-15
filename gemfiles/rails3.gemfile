@@ -7,6 +7,7 @@ gem "rake"
 gem "sqlite3"
 gem "rspec"
 gem "database_cleaner"
+gem "bump"
 gem "activerecord", "3.2.3"
 gem "activesupport", "3.2.3"
 
