@@ -43,12 +43,11 @@ describe SoftDeletion do
     # Stub dump method calls
     Category.any_instance.stub(:foo)
     Category.any_instance.stub(:bar)
-    Category.any_instance.stub(:baz) {  false }
   end
 
   describe "callbacks" do
     describe ".before_soft_delete" do
-      it "should be called on soft-deletion" do
+      it "is called on soft-deletion" do
         Category.before_soft_delete :foo
         category = Category.create!
 
@@ -57,9 +56,12 @@ describe SoftDeletion do
         category.soft_delete!
       end
 
-      it "should stop execution chain if false is returned" do
-        Category.before_soft_delete :baz
+      it "stops execution chain if false is returned" do
+        Category.before_soft_delete :foo, :bar
         category = Category.create!
+
+        category.should_receive(:foo).and_return(false)
+        category.should_not_receive(:bar)
 
         category.soft_delete!
         category.reload
