@@ -12,8 +12,8 @@ Usage
     class User < ActiveRecord::Base
       has_soft_deletion :default_scope => true
 
-      after_soft_delete :send_deletion_emails # Rails 2 + 3
-      set_callback :soft_delete, :after, :prepare_emails # Rails 3
+      before_soft_delete :validate_deletability # soft_delete stops if this returns false
+      after_soft_delete :send_deletion_emails
 
       has_many :products
     end

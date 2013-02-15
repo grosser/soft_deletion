@@ -58,7 +58,7 @@ describe SoftDeletion do
     end
 
     describe ".after_soft_delete" do
-      it "should be called after soft-deletion" do
+      it "is called after soft-deletion" do
         Category.after_soft_delete :foo
         category = Category.create!
 
@@ -67,7 +67,7 @@ describe SoftDeletion do
         category.soft_delete!
       end
 
-      it "should be called after bulk soft-deletion" do
+      it "is called after bulk soft-deletion" do
         Category.after_soft_delete :foo
         category = Category.create!
 
@@ -85,7 +85,7 @@ describe SoftDeletion do
         category.soft_delete!
       end
 
-      it "should be call multiple after soft-deletion" do
+      it "calls multiple after soft-deletion" do
         Category.after_soft_delete :foo, :bar
         category = Category.create!
 
@@ -95,7 +95,19 @@ describe SoftDeletion do
         category.soft_delete!
       end
 
-      it "should not be called after normal destroy" do
+      it "does not stop deletion when returning false" do
+        Category.after_soft_delete :foo
+        category = Category.create!
+
+        category.should_receive(:foo).and_return false
+
+        category.soft_delete!
+
+        category.reload
+        category.should be_deleted
+      end
+
+      it "is not called after normal destroy" do
         Category.after_soft_delete :foo
         category = Category.create!
 
