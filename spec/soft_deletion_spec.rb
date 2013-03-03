@@ -63,7 +63,7 @@ describe SoftDeletion do
         category.should_receive(:foo).and_return(false)
         category.should_not_receive(:bar)
 
-        category.soft_delete!
+        category.soft_delete!.should == false
         category.reload
         category.should_not be_deleted
       end

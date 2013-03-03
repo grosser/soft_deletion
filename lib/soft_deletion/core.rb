@@ -89,7 +89,7 @@ module SoftDeletion
 
     def _run_soft_delete(&block)
       self.class.transaction do
-        result = nil
+        result = false
         if ActiveRecord::VERSION::MAJOR > 2
           run_callbacks :soft_delete do
             mark_as_deleted
