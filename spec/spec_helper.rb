@@ -66,7 +66,7 @@ end
 # setup models
 
 class Forum < ActiveRecord::Base
-  has_soft_deletion
+  has_soft_deletion :default_scope => true
 
   belongs_to :category
 end

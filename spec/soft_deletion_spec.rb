@@ -207,6 +207,35 @@ describe SoftDeletion do
         end
       end
 
+      if ActiveRecord::VERSION::MAJOR == 3
+        context "soft deleting its dependent association" do
+          before do
+            @category.forums.map &:soft_delete!
+            @category.reload
+            @category.forums.with_deleted.map &:soft_undelete!
+          end
+
+          it "should restore its dependent association" do
+            @forum.reload
+            @forum.should_not be_deleted
+          end
+        end
+
+        context "soft deleting one of its dependent associations" do
+          before do
+            @category.forums.create!
+            @first_forum = @category.forums.first
+            @first_forum.soft_delete!
+          end
+
+          it "should return the deleted association" do
+            @category.reload
+            @category.forums.only_deleted == [@first_forum]
+            @category.forums.with_deleted.count.should == 2
+          end
+        end
+      end
+
       successfully_soft_deletes
       successfully_bulk_soft_deletes
 
