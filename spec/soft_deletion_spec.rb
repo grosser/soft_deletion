@@ -207,35 +207,6 @@ describe SoftDeletion do
         end
       end
 
-      if ActiveRecord::VERSION::MAJOR == 3
-        context "soft deleting its dependent association" do
-          before do
-            @category.forums.map &:soft_delete!
-            @category.reload
-            @category.forums.with_deleted.map &:soft_undelete!
-          end
-
-          it "should restore its dependent association" do
-            @forum.reload
-            @forum.should_not be_deleted
-          end
-        end
-
-        context "soft deleting one of its dependent associations" do
-          before do
-            @category.forums.create!
-            @first_forum = @category.forums.first
-            @first_forum.soft_delete!
-          end
-
-          it "should return the deleted association" do
-            @category.reload
-            @category.forums.only_deleted.should == [@first_forum]
-            @category.forums.with_deleted.count.should == 2
-          end
-        end
-      end
-
       successfully_soft_deletes
       successfully_bulk_soft_deletes
 
@@ -378,6 +349,33 @@ describe SoftDeletion do
       forum.soft_delete(skip_validations).should be_true
       forum.reload
       forum.should be_deleted
+    end
+  end
+
+  if ActiveRecord::VERSION::MAJOR == 3
+    describe "SoftDeletion::Relation::Base" do
+      before do
+        @category = Category.create!
+        @first_forum  = @category.forums.create!
+        @second_forum = @category.forums.create!
+        @first_forum.soft_delete!
+      end
+
+      context "#with_deleted" do
+        it "should find deleted and undeleted" do
+          @category.forums.count.should == 1
+          @category.forums.with_deleted.where("created_at < ?", Time.now).count.should == 2
+          @category.forums.with_deleted.where("created_at < ?", Time.now).should == [@first_forum, @second_forum]
+        end
+      end
+
+      context "#only_deleted" do
+        it "should find deleted and no undeleted" do
+          @category.forums.count.should == 1
+          @category.forums.only_deleted.where("created_at < ?", Time.now).count.should == 1
+          @category.forums.only_deleted.where("created_at < ?", Time.now).should == [@first_forum]
+        end
+      end
     end
   end
 end
