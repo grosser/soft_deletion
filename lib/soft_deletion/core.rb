@@ -13,6 +13,11 @@ module SoftDeletion
         base.define_callbacks :before_soft_delete
         base.define_callbacks :after_soft_delete
       end
+
+      # include active_record/relation#with_deleted and #only_deleted for rails 3.2
+      if ActiveRecord::VERSION::MAJOR == 3 && ActiveRecord::VERSION::MINOR == 2
+        base.extend(SoftDeletion::Relation::Base)
+      end
     end
 
     module ClassMethods

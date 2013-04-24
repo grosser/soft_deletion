@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(:version => 1) do
   create_table :forums do |t|
     t.integer :category_id
     t.timestamp :deleted_at
+    t.timestamp :created_at
   end
 
   create_table :categories do |t|
@@ -67,7 +68,7 @@ end
 # setup models
 
 class Forum < ActiveRecord::Base
-  has_soft_deletion
+  has_soft_deletion :default_scope => true
 
   belongs_to :category
 end

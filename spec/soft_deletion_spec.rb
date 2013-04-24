@@ -351,4 +351,31 @@ describe SoftDeletion do
       forum.should be_deleted
     end
   end
+
+  if ActiveRecord::VERSION::MAJOR == 3 && ActiveRecord::VERSION::MINOR >= 2
+    describe "SoftDeletion::Relation::Base" do
+      before do
+        @category = Category.create!
+        @first_forum  = @category.forums.create!
+        @second_forum = @category.forums.create!
+        @first_forum.soft_delete!
+      end
+
+      context "#with_deleted" do
+        it "should find deleted and undeleted" do
+          @category.forums.count.should == 1
+          @category.forums.with_deleted.where("created_at < ?", Time.now).count.should == 2
+          @category.forums.with_deleted.where("created_at < ?", Time.now).should == [@first_forum, @second_forum]
+        end
+      end
+
+      context "#only_deleted" do
+        it "should find deleted and no undeleted" do
+          @category.forums.count.should == 1
+          @category.forums.only_deleted.where("created_at < ?", Time.now).count.should == 1
+          @category.forums.only_deleted.where("created_at < ?", Time.now).should == [@first_forum]
+        end
+      end
+    end
+  end
 end
