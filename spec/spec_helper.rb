@@ -39,6 +39,7 @@ ActiveRecord::Base.establish_connection(
 )
 
 # create tables
+ActiveRecord::Schema.verbose = false
 ActiveRecord::Schema.define(:version => 1) do
   create_table :forums do |t|
     t.integer :category_id
@@ -149,8 +150,11 @@ class Cat1Forum < ActiveRecord::Base
   silent_set_table_name 'forums'
 
   has_soft_deletion
-  default_scope :conditions => {:category_id => 1}
-
+  if ActiveRecord::VERSION::MAJOR >= 4
+    default_scope { where(:category_id => 1) }
+  else
+    default_scope :conditions => {:category_id => 1}
+  end
 
   belongs_to :category
 end

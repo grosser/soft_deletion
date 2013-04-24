@@ -1,5 +1,13 @@
-script: "bundle exec rake"
 rvm:
-  - ree
-  - 1.9.2
   - 1.9.3
+  - 1.8.7
+  - 2.0
+gemfile:
+  - gemfiles/rails2.gemfile
+  - gemfiles/rails3.gemfile
+  - gemfiles/rails4.gemfile
+matrix:
+  exclude:
+    - rvm: 2.0
+      gemfile: gemfiles/rails2.gemfile
+script: "rake spec"
