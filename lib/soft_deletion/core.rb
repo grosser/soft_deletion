@@ -24,7 +24,8 @@ module SoftDeletion
       end
 
       def with_deleted
-        with_exclusive_scope do
+        method = (ActiveRecord::VERSION::MAJOR >= 4 ? :unscoped : :with_exclusive_scope)
+        send(method) do
           yield self
         end
       end
@@ -41,11 +42,20 @@ module SoftDeletion
           models = ids_or_models
         else
           ids = ids_or_models
-          models = all(:conditions => { :id => ids })
+          models = if ActiveRecord::VERSION::MAJOR >= 4
+            where(:id => ids)
+          else
+            all(:conditions => { :id => ids })
+          end
         end
 
         transaction do
-          update_all(mark_as_soft_deleted_sql, :id => ids)
+          if ActiveRecord::VERSION::MAJOR >= 4
+            where(:id => ids).update_all(mark_as_soft_deleted_sql)
+          else
+            update_all(mark_as_soft_deleted_sql, :id => ids)
+          end
+
           models.each do |model|
             model.soft_delete_dependencies.each(&:soft_delete!)
             model.run_callbacks ActiveRecord::VERSION::MAJOR > 2 ? :soft_delete : :after_soft_delete
