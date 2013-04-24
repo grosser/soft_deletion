@@ -8,11 +8,15 @@ module SoftDeletion
 
       # backport after_soft_delete so we can safely upgrade to rails 3
       if ActiveRecord::VERSION::MAJOR > 2
-        base.extend(SoftDeletion::Relation::Base)
         base.define_model_callbacks :soft_delete
       else
         base.define_callbacks :before_soft_delete
         base.define_callbacks :after_soft_delete
+      end
+
+      # include active_record/relation#with_deleted and #only_deleted for rails 3.2
+      if ActiveRecord::VERSION::MAJOR == 3 && ActiveRecord::VERSION::MINOR == 2
+        base.extend(SoftDeletion::Relation::Base)
       end
     end
 

@@ -352,7 +352,7 @@ describe SoftDeletion do
     end
   end
 
-  if ActiveRecord::VERSION::MAJOR == 3
+  if ActiveRecord::VERSION::MAJOR == 3 && ActiveRecord::VERSION::MINOR >= 2
     describe "SoftDeletion::Relation::Base" do
       before do
         @category = Category.create!

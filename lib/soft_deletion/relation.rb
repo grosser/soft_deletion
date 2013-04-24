@@ -1,3 +1,4 @@
+# for ActiveRecord 3.2
 module SoftDeletion
   module Relation
     def with_deleted
