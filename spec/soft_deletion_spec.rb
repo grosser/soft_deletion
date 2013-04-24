@@ -230,7 +230,7 @@ describe SoftDeletion do
 
           it "should return the deleted association" do
             @category.reload
-            @category.forums.only_deleted == [@first_forum]
+            @category.forums.only_deleted.should == [@first_forum]
             @category.forums.with_deleted.count.should == 2
           end
         end
