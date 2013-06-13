@@ -33,7 +33,7 @@ module SoftDeletion
 
     def nullify_dependencies
       dependencies.each do |dependency|
-        dependency.update_attribute(association.primary_key_name, nil)
+        dependency.update_attribute(association.options[:foreign_key], nil)
       end
     end
 

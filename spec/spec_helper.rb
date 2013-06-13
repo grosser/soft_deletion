@@ -109,7 +109,7 @@ class NDACategory < ActiveRecord::Base
 
   has_soft_deletion
 
-  has_many :forums, :dependent => :destroy, :foreign_key => :category_id
+  has_many :forums, :dependent => :nullify, :foreign_key => :category_id
 end
 
 # Has ome association

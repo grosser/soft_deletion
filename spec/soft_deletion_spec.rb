@@ -238,8 +238,8 @@ describe SoftDeletion do
         category.soft_delete!
 
         forum.reload
-        forum.should be_deleted
-        #forum.category_id.should be_nil # TODO
+        forum.should_not be_deleted
+        forum.category_id.should be_nil
       end
     end
   end
