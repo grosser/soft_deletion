@@ -43,6 +43,7 @@ ActiveRecord::Schema.verbose = false
 ActiveRecord::Schema.define(:version => 1) do
   create_table :forums do |t|
     t.integer :category_id
+    t.integer :organization_id
     t.timestamp :deleted_at
   end
 
@@ -86,6 +87,14 @@ class Category < ActiveRecord::Base
 
   has_many :forums, :dependent => :destroy
 end
+
+class Organization < ActiveRecord::Base
+  silent_set_table_name 'categories'
+  has_soft_deletion
+
+  has_many :forums, :dependent => :nullify
+end
+
 
 # No association
 class NACategory < ActiveRecord::Base

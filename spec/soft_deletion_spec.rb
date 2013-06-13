@@ -242,6 +242,18 @@ describe SoftDeletion do
         forum.category_id.should be_nil
       end
     end
+
+    context "a soft-deleted has-many category that nullifies forum references on delete without foreign_key" do
+      it "should nullify those references" do
+        organization = Organization.create!
+        forum = organization.forums.create!
+        organization.soft_delete!
+
+        forum.reload
+        forum.should_not be_deleted
+        forum.organization_id.should be_nil
+      end
+    end
   end
 
   context "without deleted_at column" do
