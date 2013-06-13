@@ -33,10 +33,10 @@ module SoftDeletion
 
     def nullify_dependencies
       dependencies.each do |dependency|
-        foreign_key = if association.respond_to?(:foreign_key) # rails 3+
+        foreign_key = if association.respond_to?(:foreign_key) # rails 3.1+
           association.foreign_key
-        else # rails 2
-          association.options[:foreign_key] || "#{record.class.name.underscore}_id"
+        else
+          association.primary_key_name
         end
         dependency.update_attribute(foreign_key, nil)
       end
