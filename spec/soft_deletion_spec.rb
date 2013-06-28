@@ -39,6 +39,7 @@ describe SoftDeletion do
 
   before do
     clear_callbacks Category, :soft_delete
+    clear_callbacks Category, :soft_undelete
 
     # Stub dump method calls
     Category.any_instance.stub(:foo)
@@ -121,6 +122,80 @@ describe SoftDeletion do
 
       it "is not called after normal destroy" do
         Category.after_soft_delete :foo
+        category = Category.create!
+
+        category.should_not_receive(:foo)
+
+        category.destroy
+      end
+    end
+
+    describe ".before_soft_undelete" do
+      it "is called on soft-undeletion" do
+        Category.before_soft_undelete :foo
+        category = Category.create!
+
+        category.should_receive(:foo)
+
+        category.soft_undelete!
+      end
+
+      it "stops execution chain if false is returned" do
+        Category.before_soft_undelete :foo, :bar
+        category = Category.create!
+
+        category.should_receive(:foo).and_return(false)
+        category.should_not_receive(:bar)
+
+        category.soft_undelete!.should == false
+        category.reload
+        category.should_not be_deleted
+      end
+    end
+
+    describe ".after_soft_undelete" do
+      it "is called after soft-undeletion" do
+        Category.after_soft_undelete :foo
+        category = Category.create!
+
+        category.should_receive(:foo)
+
+        category.soft_undelete!
+      end
+
+      it "is called with a block" do
+        Category.after_soft_undelete{|c| c.foo }
+        category = Category.create!
+
+        category.should_receive(:foo)
+
+        category.soft_undelete!
+      end
+
+      it "calls multiple after soft-undeletion" do
+        Category.after_soft_undelete :foo, :bar
+        category = Category.create!
+
+        category.should_receive(:foo)
+        category.should_receive(:bar)
+
+        category.soft_undelete!
+      end
+
+      it "does not stop undeletion when returning false" do
+        Category.after_soft_undelete :foo
+        category = Category.create!
+
+        category.should_receive(:foo).and_return false
+
+        category.soft_undelete!
+
+        category.reload
+        category.should_not be_deleted
+      end
+
+      it "is not called after normal destroy" do
+        Category.after_soft_undelete :foo
         category = Category.create!
 
         category.should_not_receive(:foo)
