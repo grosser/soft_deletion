@@ -46,6 +46,7 @@ Authors
  - [Steven Davidovitz](https://github.com/steved555)
  - [PikachuEXE](https://github.com/PikachuEXE)
  - [Noel Dellofano](https://github.com/pinkvelociraptor)
+ - [Oliver Nightingale](https://github.com/olivernn)
 
 [Zendesk](http://zendesk.com)<br/>
 michael@grosser.it<br/>
