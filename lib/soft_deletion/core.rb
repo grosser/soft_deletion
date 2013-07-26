@@ -9,9 +9,13 @@ module SoftDeletion
       # backport after_soft_delete so we can safely upgrade to rails 3
       if ActiveRecord::VERSION::MAJOR > 2
         base.define_model_callbacks :soft_delete
+        base.define_model_callbacks :soft_undelete
       else
         base.define_callbacks :before_soft_delete
         base.define_callbacks :after_soft_delete
+
+        base.define_callbacks :before_soft_undelete
+        base.define_callbacks :after_soft_undelete
       end
     end
 
@@ -84,11 +88,7 @@ module SoftDeletion
     end
 
     def soft_undelete!
-      self.class.transaction do
-        mark_as_undeleted
-        soft_delete_dependencies.each(&:soft_undelete!)
-        save!
-      end
+      _run_soft_undelete{ save! }
     end
 
     def soft_delete_dependencies
@@ -112,6 +112,26 @@ module SoftDeletion
           soft_delete_dependencies.each(&:soft_delete!)
           result = block.call
           run_callbacks :after_soft_delete
+        end
+        result
+      end
+    end
+
+    def _run_soft_undelete(&block)
+      self.class.transaction do
+        result = false
+        if ActiveRecord::VERSION::MAJOR > 2
+          run_callbacks :soft_undelete do
+            mark_as_undeleted
+            soft_delete_dependencies.each(&:soft_undelete!)
+            result = block.call
+          end
+        else
+          return false if !run_callbacks(:before_soft_undelete) { |result, object| result == false }
+          mark_as_undeleted
+          soft_delete_dependencies.each(&:soft_undelete!)
+          result = block.call
+          run_callbacks :after_soft_undelete
         end
         result
       end
