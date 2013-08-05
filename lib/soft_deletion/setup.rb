@@ -24,7 +24,7 @@ module SoftDeletion
         if options[:default_scope] && table_exists? && column_names.include?("deleted_at")
           # Avoids a bad SQL request with versions of code without the column deleted_at (for example a migration prior to the migration
           # that adds deleted_at)
-          default_scope :conditions => { :deleted_at => nil }
+          default_scope -> { where(:deleted_at => nil) }
         end
       end
     end
