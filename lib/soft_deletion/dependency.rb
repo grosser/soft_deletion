@@ -38,7 +38,8 @@ module SoftDeletion
         else
           association.primary_key_name
         end
-        dependency.update_attribute(foreign_key, nil)
+        method = (ActiveRecord::VERSION::STRING >= "3.1" ? :update_column : :update_attribute)
+        dependency.send(method, foreign_key, nil)
       end
     end
 
