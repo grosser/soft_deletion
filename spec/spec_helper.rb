@@ -168,3 +168,9 @@ class Cat1Forum < ActiveRecord::Base
   belongs_to :category
 end
 
+class Cat2Forum < ActiveRecord::Base
+  silent_set_table_name 'forums'
+
+  has_soft_deletion :default_scope => true
+end
+

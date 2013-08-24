@@ -332,10 +332,29 @@ describe SoftDeletion do
   end
 
   context "without deleted_at column" do
-    it "should default scope should not provoke an error" do
+    it "does not provoke an error" do
       expect do
         OriginalCategory.create!
       end.to_not raise_error
+    end
+  end
+
+  context "default_scope" do
+    let(:forum) do
+      # create! does not work on rails 2
+      f = Cat2Forum.new
+      f.deleted_at = Time.now
+      f.save!
+      f
+    end
+
+    it "prevents find when deleted" do
+      Cat2Forum.find_by_id(forum.id).should == nil
+    end
+
+    it "can find without deleted" do
+      forum.update_attributes(:deleted_at => nil)
+      Cat2Forum.find_by_id(forum.id).should_not == nil
     end
   end
 
