@@ -8,8 +8,6 @@ module SoftDeletion
     end
 
     def soft_delete!
-      return unless can_soft_delete?
-
       case association.options[:dependent]
       when :nullify
         nullify_dependencies
@@ -21,8 +19,6 @@ module SoftDeletion
     end
 
     def soft_undelete!(limit)
-      return unless can_soft_delete?
-
       klass.with_deleted do
         dependencies.reject { |m| m.deleted_at < limit }.each(&:soft_undelete!)
       end
@@ -40,10 +36,6 @@ module SoftDeletion
         method = (ActiveRecord::VERSION::STRING >= "3.1" ? :update_column : :update_attribute)
         dependency.send(method, foreign_key, nil)
       end
-    end
-
-    def can_soft_delete?
-      klass.method_defined? :soft_delete!
     end
 
     def klass

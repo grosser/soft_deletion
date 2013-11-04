@@ -23,7 +23,7 @@ module SoftDeletion
       def soft_delete_dependents
         reflect_on_all_associations.
           select { |a| [:destroy, :delete_all, :nullify].include?(a.options[:dependent]) }.
-          map(&:name)
+          select { |a| a.klass.method_defined?(:soft_delete!) }.map(&:name)
       end
 
       def with_deleted
