@@ -21,12 +21,18 @@ module SoftDeletion
 
         options = default_options.merge(options)
 
-        if options[:default_scope] && table_exists? && column_names.include?("deleted_at")
-          # Avoids a bad SQL request with versions of code without the column deleted_at (for example a migration prior to the migration
-          # that adds deleted_at)
+        if options[:default_scope]
           conditions = {:deleted_at => nil}
           if ActiveRecord::VERSION::STRING < "3.1"
-            default_scope :conditions => conditions
+            # Avoids a bad SQL request with versions of code without the column deleted_at
+            # (for example a migration prior to the migration that adds deleted_at)
+            if !table_exists?
+              warn "#{table_name} table missing, disabling soft_deletion default scope"
+            elsif !column_names.include?("deleted_at")
+              warn "#{table_name} does not have deleted_at column, disabling soft_deletion default scope"
+            else
+              default_scope :conditions => conditions
+            end
           else
             default_scope { where(conditions) }
           end

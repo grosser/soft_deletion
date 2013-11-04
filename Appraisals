@@ -17,8 +17,7 @@ appraise "rails32" do
 end
 
 appraise "rails4" do
-  version = "4.0.0.beta1"
+  version = "4.0.0"
   gem 'activerecord', version
   gem 'activesupport', version
 end
-
