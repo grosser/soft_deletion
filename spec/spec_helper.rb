@@ -121,6 +121,24 @@ class NDACategory < ActiveRecord::Base
   has_many :forums, :dependent => :nullify, :foreign_key => :category_id
 end
 
+# Delete dependent association
+class DDACategory < ActiveRecord::Base
+  silent_set_table_name 'categories'
+
+  has_soft_deletion
+
+  has_many :forums, :dependent => :delete_all, :foreign_key => :category_id
+end
+
+# default dependent association
+class XDACategory < ActiveRecord::Base
+  silent_set_table_name 'categories'
+
+  has_soft_deletion
+
+  has_many :forums, :foreign_key => :category_id
+end
+
 # Has ome association
 class HOACategory < ActiveRecord::Base
   silent_set_table_name 'categories'

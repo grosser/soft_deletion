@@ -21,7 +21,7 @@ module SoftDeletion
 
     module ClassMethods
       def soft_delete_dependents
-        self.reflect_on_all_associations.
+        reflect_on_all_associations.
           select { |a| [:destroy, :delete_all, :nullify].include?(a.options[:dependent]) }.
           map(&:name)
       end

@@ -38,6 +38,12 @@ Usage
     # soft delete many
     User.soft_delete_all!(1,2,3,4)
 
+TODO
+====
+ - nullify should use update_all on has_many on soft_delete (performance)
+ - has_many :through should delete join associations on soft_delete
+ - cascading soft_deletes should use the same timestamp for easy reverts
+
 Authors
 =======
 

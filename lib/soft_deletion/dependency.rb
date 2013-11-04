@@ -10,8 +10,11 @@ module SoftDeletion
     def soft_delete!
       return unless can_soft_delete?
 
-      if nullify?
+      case association.options[:dependent]
+      when :nullify
         nullify_dependencies
+      when :delete_all
+        dependency.update_all(:deleted_at => Time.now)
       else
         dependencies.each(&:soft_delete!)
       end
@@ -26,10 +29,6 @@ module SoftDeletion
     end
 
     protected
-
-    def nullify?
-      association.options[:dependent] == :nullify
-    end
 
     def nullify_dependencies
       dependencies.each do |dependency|
@@ -55,8 +54,12 @@ module SoftDeletion
       record.class.reflect_on_association(association_name.to_sym)
     end
 
+    def dependency
+      record.send(association_name)
+    end
+
     def dependencies
-      Array.wrap(record.send(association_name))
+      Array.wrap(dependency)
     end
   end
 end

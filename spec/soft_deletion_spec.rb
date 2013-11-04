@@ -330,6 +330,29 @@ describe SoftDeletion do
       end
     end
 
+    context "a soft-deleted has-many category that delete_all forum references on delete" do
+      it "use update_all to delete references" do
+        category = DDACategory.create!
+        forum = category.forums.create!
+        category.soft_delete!
+
+        forum.should_not be_deleted # just did an update_all
+        Forum.find(forum.id).should be_deleted
+      end
+    end
+
+    context "a soft-deleted has-many category that defaults dependent forum references on delete" do
+      it "does nothing to those references" do
+        category = XDACategory.create!
+        forum = category.forums.create!
+        category.soft_delete!
+
+        forum.reload
+        forum.should_not be_deleted
+        forum.category_id.should_not be_nil
+      end
+    end
+
     context "a soft-deleted has-many category that nullifies forum references on delete without foreign_key" do
       it "should nullify those references" do
         organization = Organization.create!
