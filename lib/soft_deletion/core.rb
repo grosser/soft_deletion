@@ -98,43 +98,48 @@ module SoftDeletion
     protected
 
     def _run_soft_delete(&block)
+      result = false
+      internal = lambda do
+        mark_as_deleted
+        soft_delete_dependencies.each(&:soft_delete!)
+        result = block.call
+      end
+
       self.class.transaction do
-        result = false
         if ActiveRecord::VERSION::MAJOR > 2
-          run_callbacks :soft_delete do
-            mark_as_deleted
-            soft_delete_dependencies.each(&:soft_delete!)
-            result = block.call
-          end
+          run_callbacks :soft_delete, &internal
         else
           return false if !run_callbacks(:before_soft_delete) { |result, object| result == false }
-          mark_as_deleted
-          soft_delete_dependencies.each(&:soft_delete!)
-          result = block.call
+          internal.call
           run_callbacks :after_soft_delete
         end
-        result
       end
+
+      result
     end
 
     def _run_soft_undelete(&block)
+      raise "#{self.class} is not deleted" unless deleted_at
+
+      result = false
+      limit = deleted_at - 1.hour
+      internal = lambda do
+        mark_as_undeleted
+        soft_delete_dependencies.each { |m| m.soft_undelete!(limit)}
+        result = block.call
+      end
+
       self.class.transaction do
-        result = false
         if ActiveRecord::VERSION::MAJOR > 2
-          run_callbacks :soft_undelete do
-            mark_as_undeleted
-            soft_delete_dependencies.each(&:soft_undelete!)
-            result = block.call
-          end
+          run_callbacks :soft_undelete, &internal
         else
           return false if !run_callbacks(:before_soft_undelete) { |result, object| result == false }
-          mark_as_undeleted
-          soft_delete_dependencies.each(&:soft_undelete!)
-          result = block.call
+          internal.call
           run_callbacks :after_soft_undelete
         end
-        result
       end
+
+      result
     end
   end
 end

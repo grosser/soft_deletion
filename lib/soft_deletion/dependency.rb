@@ -17,11 +17,11 @@ module SoftDeletion
       end
     end
 
-    def soft_undelete!
+    def soft_undelete!(limit)
       return unless can_soft_delete?
 
       klass.with_deleted do
-        dependencies.each(&:soft_undelete!)
+        dependencies.reject { |m| m.deleted_at < limit }.each(&:soft_undelete!)
       end
     end
 

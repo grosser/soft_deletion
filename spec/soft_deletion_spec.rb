@@ -133,7 +133,7 @@ describe SoftDeletion do
     describe ".before_soft_undelete" do
       it "is called on soft-undeletion" do
         Category.before_soft_undelete :foo
-        category = Category.create!
+        category = Category.create!(:deleted_at => Time.now)
 
         category.should_receive(:foo)
 
@@ -142,21 +142,21 @@ describe SoftDeletion do
 
       it "stops execution chain if false is returned" do
         Category.before_soft_undelete :foo, :bar
-        category = Category.create!
+        category = Category.create!(:deleted_at => Time.now)
 
         category.should_receive(:foo).and_return(false)
         category.should_not_receive(:bar)
 
         category.soft_undelete!.should == false
         category.reload
-        category.should_not be_deleted
+        category.should be_deleted
       end
     end
 
     describe ".after_soft_undelete" do
       it "is called after soft-undeletion" do
         Category.after_soft_undelete :foo
-        category = Category.create!
+        category = Category.create!(:deleted_at => Time.now)
 
         category.should_receive(:foo)
 
@@ -165,7 +165,7 @@ describe SoftDeletion do
 
       it "is called with a block" do
         Category.after_soft_undelete{|c| c.foo }
-        category = Category.create!
+        category = Category.create!(:deleted_at => Time.now)
 
         category.should_receive(:foo)
 
@@ -174,7 +174,7 @@ describe SoftDeletion do
 
       it "calls multiple after soft-undeletion" do
         Category.after_soft_undelete :foo, :bar
-        category = Category.create!
+        category = Category.create!(:deleted_at => Time.now)
 
         category.should_receive(:foo)
         category.should_receive(:bar)
@@ -184,7 +184,7 @@ describe SoftDeletion do
 
       it "does not stop undeletion when returning false" do
         Category.after_soft_undelete :foo
-        category = Category.create!
+        category = Category.create!(:deleted_at => Time.now)
 
         category.should_receive(:foo).and_return false
 
@@ -196,7 +196,7 @@ describe SoftDeletion do
 
       it "is not called after normal destroy" do
         Category.after_soft_undelete :foo
-        category = Category.create!
+        category = Category.create!(:deleted_at => Time.now)
 
         category.should_not_receive(:foo)
 
@@ -286,22 +286,34 @@ describe SoftDeletion do
       successfully_bulk_soft_deletes
 
       context "being restored from soft deletion" do
-        before do
-          @category.soft_delete!
+        def undelete!
           Category.with_deleted do
             @category.reload
             @category.soft_undelete!
           end
         end
 
-        it "should not mark itself as deleted" do
+        before do
+          @category.soft_delete!
+          Category.with_deleted { @category = Category.find(@category.id) }
+        end
+
+        it "does not mark itself as deleted" do
+          undelete!
           @category.reload
           @category.should_not be_deleted
         end
 
-        it "should restore its dependent associations" do
+        it "restores its dependent associations" do
+          undelete!
           @forum.reload
           @forum.should_not be_deleted
+        end
+
+        it "does not restore far previous deletions" do
+          @forum.update_attributes(:deleted_at => 1.year.ago)
+          undelete!
+          @forum.reload.should be_deleted
         end
       end
     end
