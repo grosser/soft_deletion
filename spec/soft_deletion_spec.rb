@@ -311,7 +311,7 @@ describe SoftDeletion do
         end
 
         it "does not fail if dependent associations are not deleted" do
-          @forum.soft_undelete!
+          @forum.reload.soft_undelete!
           undelete!
           @forum.reload
           @forum.should_not be_deleted
