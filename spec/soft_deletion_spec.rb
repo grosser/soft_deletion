@@ -310,6 +310,13 @@ describe SoftDeletion do
           @forum.should_not be_deleted
         end
 
+        it "does not fail if dependent associations are not deleted" do
+          @forum.soft_undelete!
+          undelete!
+          @forum.reload
+          @forum.should_not be_deleted
+        end
+
         it "does not restore far previous deletions" do
           @forum.update_attributes(:deleted_at => 1.year.ago)
           undelete!

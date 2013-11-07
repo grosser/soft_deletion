@@ -20,7 +20,7 @@ module SoftDeletion
 
     def soft_undelete!(limit)
       klass.with_deleted do
-        dependencies.reject { |m| m.deleted_at < limit }.each(&:soft_undelete!)
+        dependencies.reject { |m| m.deleted_at.to_i < limit.to_i }.each(&:soft_undelete!)
       end
     end
 
