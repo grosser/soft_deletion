@@ -346,6 +346,14 @@ describe SoftDeletion do
         forum.should_not be_deleted # just did an update_all
         Forum.find(forum.id).should be_deleted
       end
+
+      it "custom sql to delete all" do
+        category = DDACategory.create!
+        forum = category.forums.create!
+        DDACategory.should_receive(:mark_as_soft_deleted_sql).and_return "fooo"
+        category.forums.should_receive(:update_all).with("fooo")
+        category.soft_delete!
+      end
     end
 
     context "a soft-deleted has-many category that defaults dependent forum references on delete" do
