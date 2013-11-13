@@ -350,7 +350,7 @@ describe SoftDeletion do
       it "custom sql to delete all" do
         category = DDACategory.create!
         forum = category.forums.create!
-        DDACategory.should_receive(:mark_as_soft_deleted_sql).and_return "fooo"
+        Forum.should_receive(:mark_as_soft_deleted_sql).and_return "fooo"
         category.forums.should_receive(:update_all).with("fooo")
         category.soft_delete!
       end

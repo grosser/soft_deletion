@@ -12,7 +12,7 @@ module SoftDeletion
       when :nullify
         nullify_dependencies
       when :delete_all
-        dependency.update_all(record.class.mark_as_soft_deleted_sql)
+        dependency.update_all(dependency.mark_as_soft_deleted_sql)
       else
         dependencies.each(&:soft_delete!)
       end
