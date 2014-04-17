@@ -33,6 +33,14 @@ module SoftDeletion
         end
       end
 
+      def deleted_for(days = 0.days)
+        with_deleted { where("deleted_at <= ? ", days.ago) }
+      end
+
+      def only_deleted
+        with_deleted { where("deleted_at IS NOT ?", nil) }
+      end
+
       def mark_as_soft_deleted_sql
         ["deleted_at = ?", Time.now]
       end
