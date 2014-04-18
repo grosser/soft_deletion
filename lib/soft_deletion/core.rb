@@ -33,11 +33,11 @@ module SoftDeletion
         end
       end
 
-      def deleted_for(days = 0.days)
-        with_deleted { where("deleted_at <= ? ", days.ago) }
+      def deleted_before(ts = Time.zone.now)
+        with_deleted { where("deleted_at <= ? ", ts) }
       end
 
-      def only_deleted
+      def deleted
         with_deleted { where("deleted_at IS NOT ?", nil) }
       end
 
