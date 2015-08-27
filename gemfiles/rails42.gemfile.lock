@@ -1,5 +1,5 @@
 PATH
-  remote: .
+  remote: ../
   specs:
     soft_deletion (0.5.6)
       activerecord (>= 3.2.0, < 4.3.0)
@@ -47,6 +47,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activerecord (~> 4.2.0)
   bump
   database_cleaner (~> 1.0.0)
   rake
@@ -54,3 +55,6 @@ DEPENDENCIES
   soft_deletion!
   sqlite3
   wwtd
+
+BUNDLED WITH
+   1.10.6
