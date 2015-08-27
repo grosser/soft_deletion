@@ -3,40 +3,46 @@ Not overwriting destroy or delete.
 
 Install
 =======
-    gem install soft_deletion
+
+```Bash
+gem install soft_deletion
+```
 
 Usage
 =====
-    require 'soft_deletion'
 
-    class User < ActiveRecord::Base
-      has_soft_deletion :default_scope => true
+```Ruby
+require 'soft_deletion'
 
-      before_soft_delete :validate_deletability # soft_delete stops if this returns false
-      after_soft_delete :send_deletion_emails
+class User < ActiveRecord::Base
+  has_soft_deletion :default_scope => true
 
-      has_many :products
-    end
+  before_soft_delete :validate_deletability # soft_delete stops if this returns false
+  after_soft_delete :send_deletion_emails
 
-    # soft delete them including all dependencies that are marked as :destroy, :delete_all, :nullify
-    user = User.first
-    user.products.count == 10
-    user.soft_delete!
-    user.deleted? # true
+  has_many :products
+end
 
-    # use special with_deleted scope to find them ...
-    user.reload # ActiveRecord::RecordNotFound
-    User.with_deleted do
-      user.reload # there it is ...
-      user.products.count == 0
-    end
+# soft delete them including all soft-deletable dependencies that are marked as :destroy, :delete_all, :nullify
+user = User.first
+user.products.count == 10
+user.soft_delete!
+user.deleted? # true
 
-    # soft undelete them all
-    user.soft_undelete!
-    user.products.count == 10
+# use special with_deleted scope to find them ...
+user.reload # ActiveRecord::RecordNotFound
+User.with_deleted do
+  user.reload # there it is ...
+  user.products.count == 0
+end
 
-    # soft delete many
-    User.soft_delete_all!(1,2,3,4)
+# soft undelete them all
+user.soft_undelete!
+user.products.count == 10
+
+# soft delete many
+User.soft_delete_all!(1,2,3,4)
+```
 
 TODO
 ====
