@@ -254,7 +254,7 @@ describe SoftDeletion do
         end
 
         it "should not destroy dependent association" do
-          DestroyableForum.exists?(@forum.id).should be_true
+          DestroyableForum.exists?(@forum.id).should == true
         end
       end
     end
@@ -483,7 +483,7 @@ describe SoftDeletion do
     it "should return true if it succeeds" do
       forum = ValidatedForum.create!(:category_id => 1)
 
-      forum.soft_delete.should be_true
+      forum.soft_delete.should == true
       forum.reload
       forum.should be_deleted
     end
@@ -492,7 +492,7 @@ describe SoftDeletion do
       forum = ValidatedForum.create!(:category_id => 1)
       forum.category_id = nil
 
-      forum.soft_delete.should be_false
+      forum.soft_delete.should == false
       forum.reload
       forum.should_not be_deleted
     end
@@ -502,7 +502,7 @@ describe SoftDeletion do
       forum.category_id = nil
       skip_validations = (ActiveRecord::VERSION::MAJOR == 2 ? false : {:validate => false})
 
-      forum.soft_delete(skip_validations).should be_true
+      forum.soft_delete(skip_validations).should == true
       forum.reload
       forum.should be_deleted
     end

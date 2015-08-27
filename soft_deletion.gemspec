@@ -1,17 +1,18 @@
-$LOAD_PATH.unshift File.expand_path("../lib", __FILE__)
 name = "soft_deletion"
-require "#{name}/version"
+require "./lib/#{name}/version"
 
 Gem::Specification.new name, SoftDeletion::VERSION do |s|
   s.summary = "Explicit soft deletion for ActiveRecord via deleted_at and default scope."
   s.authors = ["Zendesk"]
   s.email = "michael@grosser.it"
   s.homepage = "https://github.com/grosser/#{name}"
-  s.files = `git ls-files`.split("\n")
+  s.files = `git ls-files lib Readme.md`.split("\n")
   s.license = "MIT"
-  key = File.expand_path("~/.ssh/gem-private_key.pem")
-  if File.exist?(key)
-    s.signing_key = key
-    s.cert_chain = ["gem-public_cert.pem"]
-  end
+  s.add_runtime_dependency 'activerecord', '>= 3.2.0', '< 4.1.0'
+  s.add_development_dependency 'rake'
+  s.add_development_dependency 'sqlite3'
+  s.add_development_dependency 'rspec', '~> 2.0'
+  s.add_development_dependency 'database_cleaner', '~> 1.0.0'
+  s.add_development_dependency 'bump'
+  s.add_development_dependency 'wwtd'
 end
