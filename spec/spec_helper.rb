@@ -2,7 +2,7 @@ require 'soft_deletion'
 require 'database_cleaner'
 require 'logger'
 
-ActiveSupport::Deprecation.behavior = -> (message, _callback) { raise message }
+ActiveSupport::Deprecation.behavior = lambda { |message, _callback| raise message }
 ActiveSupport::Deprecation.silenced = false
 # ActiveRecord::Base.logger = Logger.new(STDOUT) # for easier debugging
 
