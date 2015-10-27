@@ -506,5 +506,17 @@ describe SoftDeletion do
       forum.reload
       forum.should be_deleted
     end
+
+    it "should not change deleted_at if already soft deleted" do
+      forum = ValidatedForum.create!(:category_id => 1)
+
+      forum.soft_delete.should == true
+      forum.reload
+      deleted_at = forum.deleted_at
+
+      forum.soft_delete.should == true
+      forum.reload
+      forum.deleted_at.should eq(deleted_at)
+    end
   end
 end
