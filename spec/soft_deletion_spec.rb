@@ -507,7 +507,7 @@ describe SoftDeletion do
       forum.should be_deleted
     end
 
-    it "should not change updated_at if already soft deleted" do
+    it "should not change deleted_at if already soft deleted" do
       forum = ValidatedForum.create!(:category_id => 1)
 
       forum.soft_delete.should == true
