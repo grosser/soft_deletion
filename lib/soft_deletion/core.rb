@@ -72,7 +72,7 @@ module SoftDeletion
     end
 
     def mark_as_deleted
-      self.deleted_at = Time.now
+      self.deleted_at = Time.now unless self.deleted?
     end
 
     def mark_as_undeleted
