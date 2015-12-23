@@ -7,12 +7,6 @@ ActiveSupport::Deprecation.silenced = false
 # ActiveRecord::Base.logger = Logger.new(STDOUT) # for easier debugging
 
 RSpec.configure do |config|
-  config.before(:suite) do
-    # would be nicer to use transaction, but Rails 2 does not open a new transaction or savepoint
-    # when already inside a transaction
-    DatabaseCleaner.strategy = :truncation
-  end
-
   config.before do
     DatabaseCleaner.start
   end
@@ -23,14 +17,7 @@ RSpec.configure do |config|
 end
 
 def clear_callbacks(model, callback)
-  if ActiveRecord::VERSION::MAJOR > 2
-    model.reset_callbacks callback
-  else
-    model.class_eval do
-      instance_variable_set "@before_#{callback}_callbacks", nil
-      instance_variable_set "@after_#{callback}_callbacks", nil
-    end
-  end
+  model.reset_callbacks callback
 end
 
 # connect
@@ -56,16 +43,6 @@ ActiveRecord::Schema.define(:version => 1) do
   end
 end
 
-class ActiveRecord::Base
-  def self.silent_set_table_name(name)
-    if ActiveRecord::VERSION::MAJOR > 2
-      self.table_name = name
-    else
-      set_table_name name
-    end
-  end
-end
-
 # setup models
 
 class Forum < ActiveRecord::Base
@@ -75,7 +52,7 @@ class Forum < ActiveRecord::Base
 end
 
 class ValidatedForum < ActiveRecord::Base
-  silent_set_table_name 'forums'
+  self.table_name = 'forums'
 
   has_soft_deletion
 
@@ -90,7 +67,7 @@ class Category < ActiveRecord::Base
 end
 
 class Organization < ActiveRecord::Base
-  silent_set_table_name 'categories'
+  self.table_name = 'categories'
   has_soft_deletion
 
   has_many :forums, :dependent => :nullify
@@ -99,14 +76,14 @@ end
 
 # No association
 class NACategory < ActiveRecord::Base
-  silent_set_table_name 'categories'
+  self.table_name = 'categories'
 
   has_soft_deletion
 end
 
 # Independent association
 class IDACategory < ActiveRecord::Base
-  silent_set_table_name 'categories'
+  self.table_name = 'categories'
 
   has_soft_deletion
 
@@ -115,7 +92,7 @@ end
 
 # Nullified dependent association
 class NDACategory < ActiveRecord::Base
-  silent_set_table_name 'categories'
+  self.table_name = 'categories'
 
   has_soft_deletion
 
@@ -124,7 +101,7 @@ end
 
 # Delete dependent association
 class DDACategory < ActiveRecord::Base
-  silent_set_table_name 'categories'
+  self.table_name = 'categories'
 
   has_soft_deletion
 
@@ -133,7 +110,7 @@ end
 
 # default dependent association
 class XDACategory < ActiveRecord::Base
-  silent_set_table_name 'categories'
+  self.table_name = 'categories'
 
   has_soft_deletion
 
@@ -142,7 +119,7 @@ end
 
 # Has ome association
 class HOACategory < ActiveRecord::Base
-  silent_set_table_name 'categories'
+  self.table_name = 'categories'
 
   has_soft_deletion
 
@@ -156,7 +133,7 @@ end
 
 # Has many destroyable association
 class DACategory < ActiveRecord::Base
-  silent_set_table_name 'categories'
+  self.table_name = 'categories'
 
   has_soft_deletion
 
@@ -165,7 +142,7 @@ end
 
 # Forum that isn't soft deletable for association checking
 class DestroyableForum < ActiveRecord::Base
-  silent_set_table_name 'forums'
+  self.table_name = 'forums'
 end
 
 # test that it does not blow up when the table is not yet defined (e.g. in rake db:reset)
@@ -175,7 +152,7 @@ end
 
 # Forum with other default scope
 class Cat1Forum < ActiveRecord::Base
-  silent_set_table_name 'forums'
+  self.table_name = 'forums'
 
   has_soft_deletion
   if ActiveRecord::VERSION::MAJOR >= 4
@@ -188,8 +165,7 @@ class Cat1Forum < ActiveRecord::Base
 end
 
 class Cat2Forum < ActiveRecord::Base
-  silent_set_table_name 'forums'
+  self.table_name = 'forums'
 
   has_soft_deletion :default_scope => true
 end
-

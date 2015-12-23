@@ -20,15 +20,7 @@ module SoftDeletion
         include SoftDeletion::Core
 
         options = default_options.merge(options)
-
-        if options[:default_scope]
-          conditions = {:deleted_at => nil}
-          if ActiveRecord::VERSION::STRING < "3.1"
-            default_scope :conditions => conditions
-          else
-            default_scope { where(conditions) }
-          end
-        end
+        default_scope { where(:deleted_at => nil) } if options[:default_scope]
       end
     end
   end

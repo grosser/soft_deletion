@@ -500,9 +500,8 @@ describe SoftDeletion do
     it "should return true if validations are prevented and it succeeds" do
       forum = ValidatedForum.create!(:category_id => 1)
       forum.category_id = nil
-      skip_validations = (ActiveRecord::VERSION::MAJOR == 2 ? false : {:validate => false})
 
-      forum.soft_delete(skip_validations).should == true
+      forum.soft_delete(:validate => false).should == true
       forum.reload
       forum.should be_deleted
     end
