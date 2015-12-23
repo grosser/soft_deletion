@@ -12,7 +12,7 @@ Gem::Specification.new name, SoftDeletion::VERSION do |s|
   s.add_development_dependency 'rake'
   s.add_development_dependency 'sqlite3'
   s.add_development_dependency 'rspec', '~> 2.0'
-  s.add_development_dependency 'database_cleaner', '~> 1.0.0'
+  s.add_development_dependency 'database_cleaner', '>= 1.5.1'
   s.add_development_dependency 'bump'
   s.add_development_dependency 'wwtd'
 end
