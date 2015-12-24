@@ -28,13 +28,7 @@ module SoftDeletion
 
     def nullify_dependencies
       dependencies.each do |dependency|
-        foreign_key = if association.respond_to?(:foreign_key) # rails 3.1+
-          association.foreign_key
-        else
-          association.primary_key_name
-        end
-        method = (ActiveRecord::VERSION::STRING >= "3.1" ? :update_column : :update_attribute)
-        dependency.send(method, foreign_key, nil)
+        dependency.update_column(association.foreign_key, nil)
       end
     end
 

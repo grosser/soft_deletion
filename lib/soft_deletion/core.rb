@@ -6,17 +6,8 @@ module SoftDeletion
       end
       base.extend(ClassMethods)
 
-      # backport after_soft_delete so we can safely upgrade to rails 3
-      if ActiveRecord::VERSION::MAJOR > 2
-        base.define_model_callbacks :soft_delete
-        base.define_model_callbacks :soft_undelete
-      else
-        base.define_callbacks :before_soft_delete
-        base.define_callbacks :after_soft_delete
-
-        base.define_callbacks :before_soft_undelete
-        base.define_callbacks :after_soft_undelete
-      end
+      base.define_model_callbacks :soft_delete
+      base.define_model_callbacks :soft_undelete
     end
 
     module ClassMethods
@@ -61,7 +52,7 @@ module SoftDeletion
 
           models.each do |model|
             model.soft_delete_dependencies.each(&:soft_delete!)
-            model.run_callbacks ActiveRecord::VERSION::MAJOR > 2 ? :soft_delete : :after_soft_delete
+            model.run_callbacks :soft_delete
           end
         end
       end
@@ -80,15 +71,15 @@ module SoftDeletion
     end
 
     def soft_delete!
-      _run_soft_delete { save! }
+      result = _run_soft_delete { save! }
     end
 
     def soft_delete(*args)
-      _run_soft_delete{ save(*args) }
+      result = _run_soft_delete{ save(*args) }
     end
 
     def soft_undelete!
-      _run_soft_undelete{ save! }
+      result = _run_soft_undelete{ save! }
     end
 
     def soft_delete_dependencies
@@ -106,13 +97,7 @@ module SoftDeletion
       end
 
       self.class.transaction do
-        if ActiveRecord::VERSION::MAJOR > 2
-          run_callbacks :soft_delete, &internal
-        else
-          return false if !run_callbacks(:before_soft_delete) { |result, object| result == false }
-          internal.call
-          run_callbacks :after_soft_delete
-        end
+        run_callbacks :soft_delete, &internal
       end
 
       result
@@ -130,13 +115,7 @@ module SoftDeletion
       end
 
       self.class.transaction do
-        if ActiveRecord::VERSION::MAJOR > 2
-          run_callbacks :soft_undelete, &internal
-        else
-          return false if !run_callbacks(:before_soft_undelete) { |result, object| result == false }
-          internal.call
-          run_callbacks :after_soft_undelete
-        end
+        run_callbacks :soft_undelete, &internal
       end
 
       result

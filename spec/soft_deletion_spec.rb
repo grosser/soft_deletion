@@ -61,7 +61,11 @@ describe SoftDeletion do
         Category.before_soft_delete :foo, :bar
         category = Category.create!
 
-        category.should_receive(:foo).and_return(false)
+        if ActiveRecord::VERSION::MAJOR < 5
+          category.should_receive(:foo).and_return(false)
+        else
+          category.should_receive(:foo).and_throw(:abort)
+        end
         category.should_not_receive(:bar)
 
         category.soft_delete!.should == false
@@ -144,7 +148,11 @@ describe SoftDeletion do
         Category.before_soft_undelete :foo, :bar
         category = Category.create!(:deleted_at => Time.now)
 
-        category.should_receive(:foo).and_return(false)
+        if ActiveRecord::VERSION::MAJOR < 5
+          category.should_receive(:foo).and_return(false)
+        else
+          category.should_receive(:foo).and_throw(:abort)
+        end
         category.should_not_receive(:bar)
 
         category.soft_undelete!.should == false
@@ -500,9 +508,8 @@ describe SoftDeletion do
     it "should return true if validations are prevented and it succeeds" do
       forum = ValidatedForum.create!(:category_id => 1)
       forum.category_id = nil
-      skip_validations = (ActiveRecord::VERSION::MAJOR == 2 ? false : {:validate => false})
 
-      forum.soft_delete(skip_validations).should == true
+      forum.soft_delete(:validate => false).should == true
       forum.reload
       forum.should be_deleted
     end
