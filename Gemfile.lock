@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    soft_deletion (0.6.1)
+    soft_deletion (0.7.0)
       activerecord (>= 3.2.0, < 5.1.0)
 
 GEM
@@ -54,3 +54,6 @@ DEPENDENCIES
   soft_deletion!
   sqlite3
   wwtd
+
+BUNDLED WITH
+   1.11.2
