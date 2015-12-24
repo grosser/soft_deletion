@@ -71,15 +71,15 @@ module SoftDeletion
     end
 
     def soft_delete!
-      result = _run_soft_delete { save! }
+      _run_soft_delete { save! }
     end
 
     def soft_delete(*args)
-      result = _run_soft_delete{ save(*args) }
+      _run_soft_delete{ save(*args) }
     end
 
     def soft_undelete!
-      result = _run_soft_undelete{ save! }
+      _run_soft_undelete{ save! }
     end
 
     def soft_delete_dependencies
