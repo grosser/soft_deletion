@@ -54,6 +54,3 @@ DEPENDENCIES
   soft_deletion!
   sqlite3
   wwtd
-
-BUNDLED WITH
-   1.11.2
