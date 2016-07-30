@@ -11,6 +11,8 @@ gemfile:
   - gemfiles/rails4.1.gemfile
   - gemfiles/rails4.2.gemfile
   - gemfiles/rails5.0.gemfile
+branches:
+  only: master
 script: "bundle exec rake spec"
 matrix:
   exclude:
