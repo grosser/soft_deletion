@@ -1,3 +1,8 @@
+require 'bundler/setup'
+
+require 'single_cov'
+SingleCov.setup :rspec
+
 require 'soft_deletion'
 require 'database_cleaner'
 require 'logger'

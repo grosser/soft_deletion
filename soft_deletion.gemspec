@@ -16,4 +16,5 @@ Gem::Specification.new name, SoftDeletion::VERSION do |s|
   s.add_development_dependency 'database_cleaner', '>= 1.5.1'
   s.add_development_dependency 'bump'
   s.add_development_dependency 'wwtd'
+  s.add_development_dependency 'single_cov'
 end
