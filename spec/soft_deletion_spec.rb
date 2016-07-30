@@ -1,5 +1,10 @@
 require 'spec_helper'
 
+SingleCov.covered!
+SingleCov.covered! file: 'lib/soft_deletion/setup.rb'
+SingleCov.covered! file: 'lib/soft_deletion/core.rb', uncovered: 2 # AR version if/else
+SingleCov.covered! file: 'lib/soft_deletion/dependency.rb'
+
 describe SoftDeletion do
   def self.successfully_soft_deletes
     context "successfully soft deleted" do
@@ -44,6 +49,12 @@ describe SoftDeletion do
     # Stub dump method calls
     Category.any_instance.stub(:foo)
     Category.any_instance.stub(:bar)
+  end
+
+  it "refuses to be included in a non-AR" do
+    expect do
+      Class.new { include SoftDeletion::Core }
+    end.to raise_error(RuntimeError, /only include this/)
   end
 
   describe "callbacks" do
