@@ -18,10 +18,11 @@ module SoftDeletion
       end
 
       def with_deleted
-        method = (ActiveRecord::VERSION::MAJOR >= 4 ? :unscoped : :with_exclusive_scope)
-        send(method) do
-          yield self
-        end
+        key = :"soft_deletion_with_deleted_#{name}"
+        Thread.current[key] = true
+        yield
+      ensure
+        Thread.current[key] = nil
       end
 
       def mark_as_soft_deleted_sql

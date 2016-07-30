@@ -78,6 +78,12 @@ class Organization < ActiveRecord::Base
   has_many :forums, :dependent => :nullify
 end
 
+class CategoryWithDefault < ActiveRecord::Base
+  self.table_name = 'categories'
+  has_soft_deletion default_scope: true
+
+  has_many :forums, class_name: 'Cat2Forum', foreign_key: :category_id
+end
 
 # No association
 class NACategory < ActiveRecord::Base

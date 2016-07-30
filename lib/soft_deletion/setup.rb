@@ -15,12 +15,17 @@ module SoftDeletion
       #
       # It will check if the column "deleted_at" exist before applying default scope
       def has_soft_deletion(options={})
-        default_options = {:default_scope => false}
-
         include SoftDeletion::Core
 
-        options = default_options.merge(options)
-        default_scope { where(:deleted_at => nil) } if options[:default_scope]
+        if options[:default_scope]
+          default_scope do
+            if Thread.current[:"soft_deletion_with_deleted_#{name}"]
+              where(nil)
+            else
+              where(deleted_at: nil)
+            end
+          end
+        end
       end
     end
   end

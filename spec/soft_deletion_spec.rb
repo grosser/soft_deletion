@@ -407,13 +407,7 @@ describe SoftDeletion do
   end
 
   context "default_scope" do
-    let(:forum) do
-      # create! does not work on rails 2
-      f = Cat2Forum.new
-      f.deleted_at = Time.now
-      f.save!
-      f
-    end
+    let(:forum) { Cat2Forum.create!(deleted_at: Time.now) }
 
     it "prevents find when deleted" do
       Cat2Forum.find_by_id(forum.id).should == nil
@@ -533,6 +527,28 @@ describe SoftDeletion do
       forum.soft_delete.should == true
       forum.reload
       forum.deleted_at.should eq(deleted_at)
+    end
+  end
+
+  describe ".with_deleted" do
+    let(:forum) { Cat2Forum.create! }
+
+    it "finds deleted records" do
+      forum.soft_delete!
+      Cat2Forum.with_deleted { Cat2Forum.find(forum.id) }
+    end
+
+    it "finds normal records" do
+      Cat2Forum.with_deleted { Cat2Forum.find(forum.id) }
+    end
+
+    it "can find while joining" do
+      category = CategoryWithDefault.create!
+      forum.update_column(:category_id, category.id)
+      forum.soft_delete!
+      Cat2Forum.with_deleted do
+        CategoryWithDefault.includes(:forums).first.forums.should == [forum]
+      end
     end
   end
 end
