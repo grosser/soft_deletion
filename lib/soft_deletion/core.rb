@@ -8,6 +8,7 @@ module SoftDeletion
 
       base.define_model_callbacks :soft_delete
       base.define_model_callbacks :soft_undelete
+      base.cattr_accessor :soft_delete_default_scope
     end
 
     module ClassMethods
@@ -18,7 +19,7 @@ module SoftDeletion
       end
 
       def with_deleted
-        key = :"soft_deletion_with_deleted_#{name}"
+        key = :"soft_deletion_with_deleted_#{soft_delete_default_scope}"
         Thread.current[key] = true
         yield
       ensure
