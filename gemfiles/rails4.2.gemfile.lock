@@ -1,20 +1,20 @@
 PATH
   remote: ../
   specs:
-    soft_deletion (0.7.0)
+    soft_deletion (0.8.0)
       activerecord (>= 3.2.0, < 5.1.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (4.2.5)
-      activesupport (= 4.2.5)
+    activemodel (4.2.7.1)
+      activesupport (= 4.2.7.1)
       builder (~> 3.1)
-    activerecord (4.2.5)
-      activemodel (= 4.2.5)
-      activesupport (= 4.2.5)
+    activerecord (4.2.7.1)
+      activemodel (= 4.2.7.1)
+      activesupport (= 4.2.7.1)
       arel (~> 6.0)
-    activesupport (4.2.5)
+    activesupport (4.2.7.1)
       i18n (~> 0.7)
       json (~> 1.7, >= 1.7.7)
       minitest (~> 5.1)
@@ -23,12 +23,12 @@ GEM
     arel (6.0.3)
     builder (3.2.2)
     bump (0.5.3)
-    database_cleaner (1.5.1)
+    database_cleaner (1.5.3)
     diff-lcs (1.2.5)
     i18n (0.7.0)
     json (1.8.3)
-    minitest (5.8.3)
-    rake (10.4.2)
+    minitest (5.9.0)
+    rake (11.2.2)
     rspec (2.99.0)
       rspec-core (~> 2.99.0)
       rspec-expectations (~> 2.99.0)
