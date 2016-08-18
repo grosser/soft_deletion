@@ -538,6 +538,20 @@ describe SoftDeletion do
       Cat2Forum.with_deleted { Cat2Forum.find(forum.id) }
     end
 
+    it "finds deleted records of STI subclass" do
+      forum = Cat2ForumChild.create!
+      forum.soft_delete!
+      Cat2Forum.with_deleted { Cat2ForumChild.find(forum.id) }
+      Cat2Forum.with_deleted { Cat2Forum.find(forum.id) }
+    end
+
+    it "does not find deleted records of other classes" do
+      forum.soft_delete!
+      expect do
+        CategoryWithDefault.with_deleted { Cat2Forum.find(forum.id) }
+      end.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
     it "finds normal records" do
       Cat2Forum.with_deleted { Cat2Forum.find(forum.id) }
     end

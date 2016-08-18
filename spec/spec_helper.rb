@@ -180,3 +180,8 @@ class Cat2Forum < ActiveRecord::Base
 
   has_soft_deletion :default_scope => true
 end
+
+class Cat2ForumChild < Cat2Forum
+  self.table_name = 'forums'
+end
+

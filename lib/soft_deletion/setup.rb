@@ -18,8 +18,9 @@ module SoftDeletion
         include SoftDeletion::Core
 
         if options[:default_scope]
+          self.soft_delete_default_scope = name
           default_scope do
-            if Thread.current[:"soft_deletion_with_deleted_#{name}"]
+            if Thread.current[:"soft_deletion_with_deleted_#{soft_delete_default_scope}"]
               where(nil)
             else
               where(deleted_at: nil)
