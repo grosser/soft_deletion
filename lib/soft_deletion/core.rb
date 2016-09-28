@@ -73,15 +73,19 @@ module SoftDeletion
     end
 
     def soft_delete!
-      _run_soft_delete { save! }
+      _run_soft_delete { save! } || soft_delete_hook_failed(:before_soft_delete)
     end
 
     def soft_delete(*args)
       _run_soft_delete{ save(*args) }
     end
 
+    def soft_undelete
+      _run_soft_undelete{ save }
+    end
+
     def soft_undelete!
-      _run_soft_undelete{ save! }
+      _run_soft_undelete{ save! } || soft_delete_hook_failed(:before_soft_undelete)
     end
 
     def soft_delete_dependencies
@@ -121,6 +125,13 @@ module SoftDeletion
       end
 
       result
+    end
+
+    def soft_delete_hook_failed(hook)
+      error = (errors.full_messages.presence || ["None"]).join(", ")
+      message = "#{hook} hook failed, errors: #{error}"
+      # not passing record (self) as 2nd argument to be rails 3/4.1 compatible
+      raise ActiveRecord::RecordNotSaved.new(message)
     end
   end
 end

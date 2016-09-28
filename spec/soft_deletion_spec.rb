@@ -6,6 +6,14 @@ SingleCov.covered! file: 'lib/soft_deletion/core.rb', uncovered: 2 # AR version 
 SingleCov.covered! file: 'lib/soft_deletion/dependency.rb'
 
 describe SoftDeletion do
+  def abort_callback(category)
+    if ActiveRecord::VERSION::MAJOR < 5
+      category.should_receive(:foo).and_return(false)
+    else
+      category.should_receive(:foo).and_throw(:abort)
+    end
+  end
+
   def self.successfully_soft_deletes
     context "successfully soft deleted" do
       before do
@@ -68,20 +76,38 @@ describe SoftDeletion do
         category.soft_delete!
       end
 
-      it "stops execution chain if false is returned" do
-        Category.before_soft_delete :foo, :bar
-        category = Category.create!
+      describe "when saving is aborted" do
+        let(:category) { Category.create! }
 
-        if ActiveRecord::VERSION::MAJOR < 5
-          category.should_receive(:foo).and_return(false)
-        else
-          category.should_receive(:foo).and_throw(:abort)
+        before do
+          Category.before_soft_delete :foo, :bar
+          abort_callback(category)
+          category.should_not_receive(:bar)
         end
-        category.should_not_receive(:bar)
 
-        category.soft_delete!.should == false
-        category.reload
-        category.should_not be_deleted
+        it "stops execution chain if false is returned" do
+          category.soft_delete.should == false
+          category.reload
+          category.should_not be_deleted
+        end
+
+        it "blows up execution if false is returned with soft_delete!" do
+          expect { category.soft_delete! }.to raise_error(
+            ActiveRecord::RecordNotSaved,
+            "before_soft_delete hook failed, errors: None"
+          )
+          category.reload
+          category.should_not be_deleted
+        end
+
+        it "shows errors if false is returned with soft_delete!" do
+          category.errors[:base] << "This is bad!"
+          category.errors[:base] << "This too!"
+          expect { category.soft_delete! }.to raise_error(
+            ActiveRecord::RecordNotSaved,
+            "before_soft_delete hook failed, errors: This is bad!, This too!"
+          )
+        end
       end
     end
 
@@ -155,20 +181,29 @@ describe SoftDeletion do
         category.soft_undelete!
       end
 
-      it "stops execution chain if false is returned" do
-        Category.before_soft_undelete :foo, :bar
-        category = Category.create!(:deleted_at => Time.now)
+      describe "when saving is aborted" do
+        let(:category) { Category.create!(deleted_at: Time.now) }
 
-        if ActiveRecord::VERSION::MAJOR < 5
-          category.should_receive(:foo).and_return(false)
-        else
-          category.should_receive(:foo).and_throw(:abort)
+        before do
+          Category.before_soft_undelete :foo, :bar
+          abort_callback(category)
+          category.should_not_receive(:bar)
         end
-        category.should_not_receive(:bar)
 
-        category.soft_undelete!.should == false
-        category.reload
-        category.should be_deleted
+        it "stops execution chain if false is returned" do
+          category.soft_undelete.should == false
+          category.reload
+          category.should be_deleted
+        end
+
+        it "blows up execution if false is returned with soft_undelete!" do
+          expect { category.soft_undelete! }.to raise_error(
+            ActiveRecord::RecordNotSaved,
+            "before_soft_undelete hook failed, errors: None"
+          )
+          category.reload
+          category.should be_deleted
+        end
       end
     end
 
