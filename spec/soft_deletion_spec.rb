@@ -591,6 +591,12 @@ describe SoftDeletion do
       Cat2Forum.with_deleted { Cat2Forum.find(forum.id) }
     end
 
+    it "keeps other where clauses" do
+      expect do
+        Cat2Forum.where('1=2').with_deleted { Cat2Forum.find(forum.id) }
+      end.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
     it "can find while joining" do
       category = CategoryWithDefault.create!
       forum.update_column(:category_id, category.id)
