@@ -72,8 +72,8 @@ module SoftDeletion
       self.deleted_at = nil
     end
 
-    def soft_delete!
-      _run_soft_delete { save! } || soft_delete_hook_failed(:before_soft_delete)
+    def soft_delete!(*args)
+      _run_soft_delete { save!(*args) } || soft_delete_hook_failed(:before_soft_delete)
     end
 
     def soft_delete(*args)
