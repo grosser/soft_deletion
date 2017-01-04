@@ -504,8 +504,9 @@ describe SoftDeletion do
   end
 
   describe "validations" do
+    let(:forum) { ValidatedForum.create!(category_id: 1) }
+
     it "fails when validations fail" do
-      forum = ValidatedForum.create!(:category_id => 1)
       forum.category_id = nil
 
       expect do
@@ -517,8 +518,15 @@ describe SoftDeletion do
     end
 
     it "passes when validations pass" do
-      forum = ValidatedForum.create!(:category_id => 1)
       forum.soft_delete!
+
+      forum.reload
+      forum.should be_deleted
+    end
+
+    it "can skip validations" do
+      forum.category_id = nil
+      forum.soft_delete!(validate: false)
 
       forum.reload
       forum.should be_deleted
