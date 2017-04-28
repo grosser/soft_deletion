@@ -405,7 +405,7 @@ describe SoftDeletion do
         category = DDACategory.create!
         forum = category.forums.create!
         expect(Forum).to receive(:mark_as_soft_deleted_sql).and_return "fooo"
-        expect(category.forums).to receive(:update_all).with("fooo")
+        expect_any_instance_of(category.forums.class).to receive(:update_all).with("fooo")
         category.soft_delete!
       end
     end

@@ -27,7 +27,7 @@ module SoftDeletion
       end
 
       def mark_as_soft_deleted_sql
-        ["deleted_at = ?", Time.now]
+        { deleted_at: Time.now }
       end
 
       def soft_delete_all!(ids_or_models)
