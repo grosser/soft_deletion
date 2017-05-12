@@ -26,6 +26,14 @@ module SoftDeletion
         Thread.current[key] = nil
       end
 
+      def deleted_before(ts = Time.zone.now)
+        with_deleted { where("deleted_at <= ? ", ts) }
+      end
+
+      def deleted
+        with_deleted { where("deleted_at IS NOT ?", nil) }
+      end
+
       def mark_as_soft_deleted_sql
         { deleted_at: Time.now }
       end
