@@ -142,7 +142,7 @@ class OriginalCategory < ActiveRecord::Base
   has_soft_deletion
 end
 
-# Has many destroyable association
+# Has many Destroyable Association
 class DACategory < ActiveRecord::Base
   self.table_name = 'categories'
 
