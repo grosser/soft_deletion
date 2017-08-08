@@ -36,6 +36,8 @@ User.with_deleted do
   user.products.count == 0
 end
 
+# Do NOT use on assocations: Account.first.users.with_deleted {
+
 # soft undelete them all
 user.soft_undelete!
 user.products.count == 10

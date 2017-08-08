@@ -583,6 +583,14 @@ describe SoftDeletion do
       Cat2Forum.with_deleted { Cat2Forum.find(forum.id) }
     end
 
+    it "finds deleted records when used on a association" do
+      pending "This would be a nice feature but does not work since a method missing causes a relation load" if ActiveRecord::VERSION::MAJOR > 3
+      category = CategoryWithDefault.create!
+      forum.update_column :category_id, category.id
+      forum.soft_delete!
+      category.forums.with_deleted { Cat2Forum.find(forum.id) }
+    end
+
     it "finds deleted records of STI subclass" do
       forum = Cat2ForumChild.create!
       forum.soft_delete!

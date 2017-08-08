@@ -17,4 +17,5 @@ Gem::Specification.new name, SoftDeletion::VERSION do |s|
   s.add_development_dependency 'bump'
   s.add_development_dependency 'wwtd'
   s.add_development_dependency 'single_cov'
+  s.add_development_dependency 'byebug'
 end
