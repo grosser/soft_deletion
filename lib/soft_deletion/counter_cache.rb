@@ -19,7 +19,7 @@ module SoftDeletion
 
     def update(up=false)
       unless destroyed_by_association
-        if send(association.reflection.name)
+        if record.send(association.reflection.name)
           up ? association.increment_counters : association.decrement_counters
         end
       end
