@@ -92,6 +92,10 @@ module SoftDeletion
       self.class.soft_delete_dependents.map { |dependent| SoftDeletion::Dependency.new(self, dependent) }
     end
 
+    def counter_cache_associations
+      each_counter_cached_associations.map { |association| SoftDeletion::CounterCache.new(self, association) }
+    end
+
     protected
 
     def _run_soft_delete(&block)
@@ -99,6 +103,7 @@ module SoftDeletion
       internal = lambda do
         mark_as_deleted
         soft_delete_dependencies.each(&:soft_delete!)
+        counter_cache_associations.each(&:decrement!)
         result = block.call
       end
 
@@ -117,6 +122,7 @@ module SoftDeletion
       internal = lambda do
         mark_as_undeleted
         soft_delete_dependencies.each { |m| m.soft_undelete!(limit)}
+        counter_cache_associations.each(&:increment!)
         result = block.call
       end
 
