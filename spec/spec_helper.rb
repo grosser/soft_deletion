@@ -46,6 +46,11 @@ ActiveRecord::Schema.define(:version => 1) do
 
   create_table :original_categories do |t|
   end
+
+  create_table :counter_cache_categories do |t|
+    t.integer :forums_count, null: false, default: 0
+    t.timestamp :deleted_at
+  end
 end
 
 # setup models
@@ -185,3 +190,20 @@ class Cat2ForumChild < Cat2Forum
   self.table_name = 'forums'
 end
 
+# Counter cache Forum
+class CCForum < ActiveRecord::Base
+  self.table_name = 'forums'
+
+  has_soft_deletion
+
+  belongs_to :category, class_name: 'CCCategory', foreign_key: 'category_id', counter_cache: :forums_count
+end
+
+# Counter cache category
+class CCCategory < ActiveRecord::Base
+  self.table_name = 'counter_cache_categories'
+
+  has_soft_deletion
+
+  has_many :forums, class_name: 'CCForum', primary_key: 'id', foreign_key: 'category_id'
+end

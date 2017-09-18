@@ -626,4 +626,31 @@ describe SoftDeletion do
       end
     end
   end
+
+  context "counter-caches" do
+    it "updates counter-cache on soft delete" do
+      category = CCCategory.create!
+
+      forum1 = category.forums.create!
+      forum2 = category.forums.create!
+
+      expect(category.forums_count).to eq 2
+
+      forum1.soft_delete!
+
+      expect(category.reload.forums_count).to eq 1
+    end
+
+    it "updates counter-cache on soft undelete" do
+      category = CCCategory.create!
+
+      forum1 = category.forums.create!
+      forum2 = category.forums.create!
+      forum1.soft_delete!
+      expect(category.reload.forums_count).to eq 1
+
+      forum1.soft_undelete!
+      expect(category.reload.forums_count).to eq 2
+    end
+  end
 end
