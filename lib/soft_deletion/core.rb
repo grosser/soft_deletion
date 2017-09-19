@@ -96,12 +96,7 @@ module SoftDeletion
 
     def soft_delete_counter_cache_associations
       each_counter_cached_associations do |association|
-        foreign_key = association.reflection.foreign_key.to_sym
-        unless destroyed_by_association && destroyed_by_association.foreign_key.to_sym == foreign_key
-          if send(association.reflection.name)
-            yield association
-          end
-        end
+        yield association if association.target
       end
     end
 
