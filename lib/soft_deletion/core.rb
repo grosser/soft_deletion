@@ -95,13 +95,11 @@ module SoftDeletion
     protected
 
     def soft_delete_counter_cache_associations
-      Enumerator.new do |yielder|
-        each_counter_cached_associations do |association|
-          foreign_key = association.reflection.foreign_key.to_sym
-          unless destroyed_by_association && destroyed_by_association.foreign_key.to_sym == foreign_key
-            if send(association.reflection.name)
-              yielder << association
-            end
+      each_counter_cached_associations do |association|
+        foreign_key = association.reflection.foreign_key.to_sym
+        unless destroyed_by_association && destroyed_by_association.foreign_key.to_sym == foreign_key
+          if send(association.reflection.name)
+            yield association
           end
         end
       end
@@ -113,7 +111,7 @@ module SoftDeletion
         mark_as_deleted
         soft_delete_dependencies.each(&:soft_delete!)
         result = block.call
-        soft_delete_counter_cache_associations.each(&:decrement_counters)
+        soft_delete_counter_cache_associations(&:decrement_counters)
       end
 
       self.class.transaction do
@@ -132,7 +130,7 @@ module SoftDeletion
         mark_as_undeleted
         soft_delete_dependencies.each { |m| m.soft_undelete!(limit)}
         result = block.call
-        soft_delete_counter_cache_associations.each(&:increment_counters)
+        soft_delete_counter_cache_associations(&:increment_counters)
       end
 
       self.class.transaction do
