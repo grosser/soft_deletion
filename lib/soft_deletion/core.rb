@@ -94,12 +94,30 @@ module SoftDeletion
 
     protected
 
+    if ActiveRecord::VERSION::MAJOR < 4
+      def each_counter_cached_associations
+        reflections.each do |name, reflection|
+          yield association(name.to_sym) if reflection.belongs_to? && reflection.counter_cache_column
+        end
+      end
+    end
+
+    def update_soft_delete_counter_caches(value)
+      each_counter_cached_associations do |association|
+        if association.target
+          target = association.target
+          target.class.update_counters(target.id, association.reflection.counter_cache_column => value)
+        end
+      end
+    end
+
     def _run_soft_delete(&block)
       result = false
       internal = lambda do
         mark_as_deleted
         soft_delete_dependencies.each(&:soft_delete!)
         result = block.call
+        update_soft_delete_counter_caches(-1)
       end
 
       self.class.transaction do
@@ -118,6 +136,7 @@ module SoftDeletion
         mark_as_undeleted
         soft_delete_dependencies.each { |m| m.soft_undelete!(limit)}
         result = block.call
+        update_soft_delete_counter_caches(1)
       end
 
       self.class.transaction do

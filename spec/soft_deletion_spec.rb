@@ -2,7 +2,7 @@ require 'spec_helper'
 
 SingleCov.covered!
 SingleCov.covered! file: 'lib/soft_deletion/setup.rb'
-SingleCov.covered! file: 'lib/soft_deletion/core.rb', uncovered: 2 # AR version if/else
+SingleCov.covered! file: 'lib/soft_deletion/core.rb', uncovered: 5 # AR version if/else
 SingleCov.covered! file: 'lib/soft_deletion/dependency.rb'
 
 describe SoftDeletion do
@@ -624,6 +624,33 @@ describe SoftDeletion do
           CategoryWithDefault.includes(:forums).first.forums
         ).to eq([forum])
       end
+    end
+  end
+
+  context "counter-caches" do
+    it "updates counter-cache on soft delete" do
+      category = CCCategory.create!
+
+      forum1 = category.forums.create!
+      forum2 = category.forums.create!
+
+      expect(category.reload.forums_count).to eq 2
+
+      forum1.soft_delete!
+
+      expect(category.reload.forums_count).to eq 1
+    end
+
+    it "updates counter-cache on soft undelete" do
+      category = CCCategory.create!
+
+      forum1 = category.forums.create!
+      forum2 = category.forums.create!
+      forum1.soft_delete!
+      expect(category.reload.forums_count).to eq 1
+
+      forum1.soft_undelete!
+      expect(category.reload.forums_count).to eq 2
     end
   end
 end
