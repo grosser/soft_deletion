@@ -61,6 +61,7 @@ Authors
  - [PikachuEXE](https://github.com/PikachuEXE)
  - [Noel Dellofano](https://github.com/pinkvelociraptor)
  - [Oliver Nightingale](https://github.com/olivernn)
+ - [Kumar Pandya](https://github.com/kpandya91)
 
 [Zendesk](http://zendesk.com)<br/>
 michael@grosser.it<br/>
