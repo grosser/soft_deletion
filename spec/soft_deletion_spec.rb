@@ -575,6 +575,27 @@ describe SoftDeletion do
     end
   end
 
+  describe "#reload" do
+    it "can reload" do
+      cat = Cat2Forum.create!(:category_id => 1)
+      cat.reload
+    end
+
+    it "cannot reload when deleted" do
+      cat = Cat2Forum.create!(:category_id => 1)
+      cat.soft_delete!
+      expect { cat.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it "can reload when deleted and with_deleted" do
+      cat = Cat2Forum.create!(:category_id => 1)
+      cat.soft_delete!
+      ValidatedForum.with_deleted do
+        cat.reload
+      end
+    end
+  end
+
   describe ".with_deleted" do
     let(:forum) { Cat2Forum.create! }
 
