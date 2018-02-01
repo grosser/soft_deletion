@@ -56,9 +56,18 @@ end
 # setup models
 
 class Forum < ActiveRecord::Base
+  attr_accessor :fail_validations
   has_soft_deletion
 
   belongs_to :category
+
+  validate :fail_validation_not_set
+
+  private
+
+  def fail_validation_not_set
+    errors.add(:base, 'foo') if fail_validations
+  end
 end
 
 class ValidatedForum < ActiveRecord::Base

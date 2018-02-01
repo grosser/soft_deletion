@@ -289,6 +289,12 @@ describe SoftDeletion do
 
       successfully_soft_deletes
       successfully_bulk_soft_deletes
+
+      it 'fails when dependent association fails to soft delete' do
+        @forum.fail_validations = true
+
+        expect { @category.soft_delete! }.to raise_error ActiveRecord::RecordInvalid
+      end
     end
 
     context "with dependent association that doesn't have soft deletion" do
