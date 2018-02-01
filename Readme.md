@@ -26,7 +26,7 @@ end
 # soft delete them including all soft-deletable dependencies that are marked as :destroy, :delete_all, :nullify
 user = User.first
 user.products.count == 10
-user.soft_delete!
+user.soft_delete!(validate: false)
 user.deleted? # true
 
 # use special with_deleted scope to find them ...

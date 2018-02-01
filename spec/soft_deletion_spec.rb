@@ -289,6 +289,20 @@ describe SoftDeletion do
 
       successfully_soft_deletes
       successfully_bulk_soft_deletes
+
+      it 'fails when dependent association fails to soft_delete!' do
+        @forum.fail_validations = true
+
+        expect { @category.soft_delete! }.to raise_error ActiveRecord::RecordInvalid
+      end
+
+      it 'ignores when dependent association fails to soft_delete' do
+        @forum.fail_validations = true
+
+        expect(@category.soft_delete).to eq false
+        expect(@forum).to be_deleted # Attributes stay set even though save failed
+        expect(@forum.reload).to_not be_deleted
+      end
     end
 
     context "with dependent association that doesn't have soft deletion" do
@@ -316,7 +330,8 @@ describe SoftDeletion do
     context "with dependent has_many associations" do
       before do
         @category = Category.create!
-        @forum = @category.forums.create!
+        2.times { @category.forums.create! }
+        @forum, @forum2 = @category.forums
       end
 
       context "failing to soft delete" do
@@ -335,6 +350,37 @@ describe SoftDeletion do
           expect(@forum).not_to be_deleted
         end
       end
+
+      context 'with invalid dependencies' do
+        before do
+          @forum.fail_validations = true
+        end
+
+        it 'stops early and fails when cascading soft delete fails' do
+          expect(@category.soft_delete).to eq false
+          expect(@forum).to be_deleted
+          expect(@forum.reload).to_not be_deleted
+          expect(@forum2).to_not be_deleted
+        end
+
+        it 'it does not persist deletes when soft delete fails' do
+          @forum.fail_validations = false
+          @forum2.fail_validations = true
+
+          expect(@category.soft_delete).to eq false
+
+          expect(@forum.reload).to_not be_deleted
+          expect(@forum2.reload).to_not be_deleted
+        end
+
+        it 'soft_deletes everything' do
+          expect(@category.soft_delete(validate: false)).to eq true
+
+          expect(@forum.reload).to be_deleted
+          expect(@forum2.reload).to be_deleted
+        end
+      end
+
 
       successfully_soft_deletes
       successfully_bulk_soft_deletes

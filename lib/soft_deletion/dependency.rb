@@ -7,14 +7,15 @@ module SoftDeletion
       @association_name = association_name
     end
 
-    def soft_delete!
+    def execute_soft_delete(method, args)
       case association.options[:dependent]
       when :nullify
         nullify_dependencies
       when :delete_all
         dependency.update_all(dependency.mark_as_soft_deleted_sql)
+        true
       else
-        dependencies.each(&:soft_delete!)
+        dependencies.all? { |dep| dep.send(method, *args) }
       end
     end
 

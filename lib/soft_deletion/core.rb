@@ -53,7 +53,7 @@ module SoftDeletion
           end
 
           models.each do |model|
-            model.soft_delete_dependencies.each(&:soft_delete!)
+            model.soft_delete_dependencies.each { |dep| dep.execute_soft_delete(:soft_delete!, []) }
             model.run_callbacks :soft_delete
           end
         end
@@ -73,11 +73,11 @@ module SoftDeletion
     end
 
     def soft_delete!(*args)
-      _run_soft_delete { save!(*args) } || soft_delete_hook_failed(:before_soft_delete)
+      _run_soft_delete(:soft_delete!, args) { save!(*args) } || soft_delete_hook_failed(:before_soft_delete)
     end
 
     def soft_delete(*args)
-      _run_soft_delete{ save(*args) }
+      _run_soft_delete(:soft_delete, args) { save(*args) }
     end
 
     def soft_undelete
@@ -111,19 +111,21 @@ module SoftDeletion
       end
     end
 
-    def _run_soft_delete(&block)
+    def _run_soft_delete(method, args, &block)
       result = false
-      internal = lambda do
-        mark_as_deleted
-        soft_delete_dependencies.each(&:soft_delete!)
-        result = block.call
-        update_soft_delete_counter_caches(-1)
-      end
-
       self.class.transaction do
-        run_callbacks :soft_delete, &internal
-      end
+        internal = lambda do
+          mark_as_deleted
+          raise ActiveRecord::Rollback unless soft_delete_dependencies.all? { |dep| dep.execute_soft_delete(method, args) }
+          result = block.call
+          raise ActiveRecord::Rollback unless result
+          update_soft_delete_counter_caches(-1)
+        end
 
+        run_callbacks :soft_delete, &internal
+
+        result
+      end
       result
     end
 
@@ -134,7 +136,7 @@ module SoftDeletion
       limit = deleted_at - 1.hour
       internal = lambda do
         mark_as_undeleted
-        soft_delete_dependencies.each { |m| m.soft_undelete!(limit)}
+        soft_delete_dependencies.each { |m| m.soft_undelete!(limit) }
         result = block.call
         update_soft_delete_counter_caches(1)
       end
