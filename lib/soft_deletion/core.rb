@@ -38,19 +38,11 @@ module SoftDeletion
           models = ids_or_models
         else
           ids = ids_or_models
-          models = if ActiveRecord::VERSION::MAJOR >= 4
-            where(:id => ids)
-          else
-            all(:conditions => { :id => ids })
-          end
+          models = where(:id => ids)
         end
 
         transaction do
-          if ActiveRecord::VERSION::MAJOR >= 4
-            where(:id => ids).update_all(mark_as_soft_deleted_sql)
-          else
-            update_all(mark_as_soft_deleted_sql, :id => ids)
-          end
+          where(:id => ids).update_all(mark_as_soft_deleted_sql)
 
           models.each do |model|
             model.soft_delete_dependencies.each { |dep| dep.execute_soft_delete(:soft_delete!, []) }
@@ -93,14 +85,6 @@ module SoftDeletion
     end
 
     protected
-
-    if ActiveRecord::VERSION::MAJOR < 4
-      def each_counter_cached_associations
-        reflections.each do |name, reflection|
-          yield association(name.to_sym) if reflection.belongs_to? && reflection.counter_cache_column
-        end
-      end
-    end
 
     def update_soft_delete_counter_caches(value)
       each_counter_cached_associations do |association|

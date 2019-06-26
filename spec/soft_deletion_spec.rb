@@ -2,7 +2,7 @@ require 'spec_helper'
 
 SingleCov.covered!
 SingleCov.covered! file: 'lib/soft_deletion/setup.rb'
-SingleCov.covered! file: 'lib/soft_deletion/core.rb', uncovered: 5 # AR version if/else
+SingleCov.covered! file: 'lib/soft_deletion/core.rb'
 SingleCov.covered! file: 'lib/soft_deletion/dependency.rb'
 
 describe SoftDeletion do

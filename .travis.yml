@@ -2,23 +2,17 @@ cache: bundler
 sudo: false
 bundler_args: ""
 rvm:
-  - 2.2
-  - 2.3
   - 2.4
+  - 2.5
+  - 2.6
 gemfile:
-  - gemfiles/rails3.2.gemfile
   - gemfiles/rails4.2.gemfile
-  - gemfiles/rails5.0.gemfile
-  - gemfiles/rails5.1.gemfile
   - gemfiles/rails5.2.gemfile
 branches:
   only: master
-script: "bundle exec rake spec"
+before_install: gem i matching_bundle && matching_bundle install
+script: matching_bundle exec rake spec
 matrix:
   exclude:
-    - rvm: 2.3
-      gemfile: gemfiles/rails3.2.gemfile
-    - rvm: 2.4
-      gemfile: gemfiles/rails3.2.gemfile
     - rvm: 2.4
       gemfile: gemfiles/rails4.2.gemfile
