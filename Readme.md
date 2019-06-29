@@ -62,6 +62,7 @@ Authors
  - [Noel Dellofano](https://github.com/pinkvelociraptor)
  - [Oliver Nightingale](https://github.com/olivernn)
  - [Kumar Pandya](https://github.com/kpandya91)
+ - [Alex Pauly](https://github.com/apauly)
 
 [Zendesk](http://zendesk.com)<br/>
 michael@grosser.it<br/>
