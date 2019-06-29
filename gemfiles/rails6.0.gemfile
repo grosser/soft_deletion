@@ -1,0 +1,6 @@
+source "https://rubygems.org"
+
+gem "activerecord", "~> 6.0.0.rc"
+gem "sqlite3", "~> 1.4"
+
+gemspec path: "../"

@@ -418,7 +418,7 @@ describe SoftDeletion do
         end
 
         it "does not restore far previous deletions" do
-          @forum.update_attributes(:deleted_at => 1.year.ago)
+          @forum.update(deleted_at: 1.year.ago)
           undelete!
           expect(@forum.reload).to be_deleted
         end
@@ -495,7 +495,7 @@ describe SoftDeletion do
     end
 
     it "can find without deleted" do
-      forum.update_attributes(:deleted_at => nil)
+      forum.update(deleted_at: nil)
       expect(Cat2Forum.find_by_id(forum.id)).not_to be_nil
     end
   end
@@ -699,4 +699,5 @@ describe SoftDeletion do
       expect(category.reload.forums_count).to eq 2
     end
   end
+
 end
