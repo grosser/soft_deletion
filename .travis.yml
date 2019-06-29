@@ -8,6 +8,7 @@ rvm:
 gemfile:
   - gemfiles/rails4.2.gemfile
   - gemfiles/rails5.2.gemfile
+  - gemfiles/rails6.0.gemfile
 branches:
   only: master
 before_install: gem i matching_bundle && matching_bundle install
@@ -16,3 +17,5 @@ matrix:
   exclude:
     - rvm: 2.4
       gemfile: gemfiles/rails4.2.gemfile
+    - rvm: 2.4
+      gemfile: gemfiles/rails6.0.gemfile

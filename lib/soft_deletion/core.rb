@@ -88,6 +88,7 @@ module SoftDeletion
 
     def update_soft_delete_counter_caches(value)
       each_counter_cached_associations do |association|
+        association.load_target unless association.loaded?
         if association.target
           target = association.target
           target.class.update_counters(target.id, association.reflection.counter_cache_column => value)
