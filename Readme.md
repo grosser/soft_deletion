@@ -66,4 +66,4 @@ Authors
 [Zendesk](http://zendesk.com)<br/>
 michael@grosser.it<br/>
 License: MIT<br/>
-[![Build Status](https://travis-ci.org/grosser/soft_deletion.png)](https://travis-ci.org/grosser/soft_deletion)
+![CI](https://github.com/grosser/soft_deletion/workflows/CI/badge.svg)

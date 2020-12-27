@@ -101,8 +101,8 @@ describe SoftDeletion do
         end
 
         it "shows errors if false is returned with soft_delete!" do
-          category.errors[:base] << "This is bad!"
-          category.errors[:base] << "This too!"
+          category.errors.add :base, "This is bad!"
+          category.errors.add :base, "This too!"
           expect { category.soft_delete! }.to raise_error(
             ActiveRecord::RecordNotSaved,
             "before_soft_delete hook failed, errors: This is bad!, This too!"
