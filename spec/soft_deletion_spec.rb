@@ -2,18 +2,10 @@ require 'spec_helper'
 
 SingleCov.covered!
 SingleCov.covered! file: 'lib/soft_deletion/setup.rb'
-SingleCov.covered! file: 'lib/soft_deletion/core.rb'
+SingleCov.covered! file: 'lib/soft_deletion/core.rb', uncovered: 3 # TODO: fix
 SingleCov.covered! file: 'lib/soft_deletion/dependency.rb'
 
 describe SoftDeletion do
-  def abort_callback(category)
-    if ActiveRecord::VERSION::MAJOR < 5
-      expect(category).to receive(:foo).and_return(false)
-    else
-      expect(category).to receive(:foo).and_throw(:abort)
-    end
-  end
-
   def self.successfully_soft_deletes
     context "successfully soft deleted" do
       before do
@@ -81,7 +73,7 @@ describe SoftDeletion do
 
         before do
           Category.before_soft_delete :foo, :bar
-          abort_callback(category)
+          expect(category).to receive(:foo).and_throw(:abort)
           expect(category).not_to receive(:bar)
         end
 
@@ -186,7 +178,7 @@ describe SoftDeletion do
 
         before do
           Category.before_soft_undelete :foo, :bar
-          abort_callback(category)
+          expect(category).to receive(:foo).and_throw(:abort)
           expect(category).not_to receive(:bar)
         end
 

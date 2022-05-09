@@ -180,11 +180,7 @@ class Cat1Forum < ActiveRecord::Base
   self.table_name = 'forums'
 
   has_soft_deletion
-  if ActiveRecord::VERSION::MAJOR >= 4
-    default_scope { where(:category_id => 1) }
-  else
-    default_scope :conditions => {:category_id => 1}
-  end
+  default_scope { where(:category_id => 1) }
 
   belongs_to :category
 end
