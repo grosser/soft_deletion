@@ -19,10 +19,5 @@ jobs:
     - uses: zendesk/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
-      # TODO: use `bundler-cache: true` and delete the next 2 steps
-    - run: bundle install
-    - uses: zendesk/cache@v2
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-${{ hashFiles('**/Gemfile.lock') }}
+        bundler-cache: true
     - run: bundle exec rake
