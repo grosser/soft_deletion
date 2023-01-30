@@ -45,7 +45,7 @@ module SoftDeletion
           where(:id => ids).update_all(mark_as_soft_deleted_sql)
 
           models.each do |model|
-            model.soft_delete_dependencies.each { |dep| dep.execute_soft_delete(:soft_delete!, []) }
+            model.soft_delete_dependencies.each { |dep| dep.execute_soft_delete(:soft_delete!) }
             model.run_callbacks :soft_delete
           end
         end
@@ -64,12 +64,12 @@ module SoftDeletion
       self.deleted_at = nil
     end
 
-    def soft_delete!(*args)
-      _run_soft_delete(:soft_delete!, args) { save!(*args) } || soft_delete_hook_failed(:before_soft_delete)
+    def soft_delete!(*args, **kwargs)
+      _run_soft_delete(:soft_delete!, *args, **kwargs) { save!(*args, **kwargs) } || soft_delete_hook_failed(:before_soft_delete)
     end
 
-    def soft_delete(*args)
-      _run_soft_delete(:soft_delete, args) { save(*args) }
+    def soft_delete(*args, **kwargs)
+      _run_soft_delete(:soft_delete, *args, **kwargs) { save(*args, **kwargs) }
     end
 
     def soft_undelete
@@ -96,12 +96,12 @@ module SoftDeletion
       end
     end
 
-    def _run_soft_delete(method, args, &block)
+    def _run_soft_delete(method, *args, **kwargs, &block)
       result = false
       self.class.transaction do
         internal = lambda do
           mark_as_deleted
-          raise ActiveRecord::Rollback unless soft_delete_dependencies.all? { |dep| dep.execute_soft_delete(method, args) }
+          raise ActiveRecord::Rollback unless soft_delete_dependencies.all? { |dep| dep.execute_soft_delete(method, *args, **kwargs) }
           result = block.call
           raise ActiveRecord::Rollback unless result
           update_soft_delete_counter_caches(-1)
