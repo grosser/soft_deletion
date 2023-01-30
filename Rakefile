@@ -1,11 +1,12 @@
 require 'bundler/setup'
 require 'bundler/gem_tasks'
-require 'rspec/core/rake_task'
+
 require 'bump/tasks'
+Bump.replace_in_default = Dir["gemfiles/*.lock"]
 
-task default: :spec
-
+require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec)
+task default: :spec
 
 desc "Bundle all gemfiles"
 task :bundle_all do
