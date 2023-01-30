@@ -9,8 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: ['2.7']
+        ruby: ['2.7', '3.0']
         rails: ['5.2', '6.0', '6.1', '7.0']
+        exclude:
+          - ruby: '3.0'
+            rails: '5.2'
     name: ruby${{ matrix.ruby }} rails${{ matrix.rails }} rake
     env:
       BUNDLE_GEMFILE: gemfiles/rails${{ matrix.rails }}.gemfile
