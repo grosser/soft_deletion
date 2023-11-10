@@ -7,6 +7,13 @@ require 'soft_deletion'
 require 'database_cleaner'
 require 'logger'
 
+if ActiveRecord::VERSION::STRING > "7.1.0"
+  ActiveRecord.deprecator.behavior = lambda { |message, _callback| raise message }
+  ActiveRecord.deprecator.silenced = false
+else
+  ActiveSupport::Deprecation.behavior = lambda { |message, _callback| raise message }
+  ActiveSupport::Deprecation.silenced = false
+end
 # ActiveRecord::Base.logger = Logger.new(STDOUT) # for easier debugging
 
 RSpec.configure do |config|
