@@ -1,5 +1,5 @@
 PATH
-  remote: .
+  remote: ..
   specs:
     soft_deletion (1.8.0)
       activerecord (>= 5.0.0, < 7.2)
@@ -40,7 +40,6 @@ GEM
       ruby2_keywords
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
-    mini_portile2 (2.8.5)
     minitest (5.20.0)
     mutex_m (0.2.0)
     rake (13.1.0)
@@ -59,16 +58,16 @@ GEM
     rspec-support (3.12.1)
     ruby2_keywords (0.0.5)
     single_cov (1.11.0)
-    sqlite3 (1.6.8)
-      mini_portile2 (~> 2.8.0)
+    sqlite3 (1.6.8-x86_64-linux)
     timeout (0.4.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
 
 PLATFORMS
-  ruby
+  x86_64-linux
 
 DEPENDENCIES
+  activerecord (~> 7.1.0)
   bump
   byebug
   database_cleaner (>= 1.5.1)
@@ -76,7 +75,7 @@ DEPENDENCIES
   rspec (~> 3.5)
   single_cov
   soft_deletion!
-  sqlite3
+  sqlite3 (~> 1.4)
 
 BUNDLED WITH
-   2.3.12
+   2.4.21
