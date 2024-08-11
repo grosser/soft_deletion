@@ -12,7 +12,7 @@ desc "Bundle all gemfiles"
 task :bundle_all do
   Bundler.with_original_env do
     Dir["gemfiles/*.gemfile"].each do |gemfile|
-      sh "BUNDLE_GEMFILE=#{gemfile} bundle"
+      sh "BUNDLE_GEMFILE=#{gemfile} bundle #{ENV["CMD"]}"
     end
   end
 end
