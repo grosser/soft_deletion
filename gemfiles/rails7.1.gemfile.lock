@@ -58,12 +58,14 @@ GEM
     rspec-support (3.12.1)
     ruby2_keywords (0.0.5)
     single_cov (1.11.0)
-    sqlite3 (1.6.8-x86_64-linux)
+    sqlite3 (1.7.3-arm64-darwin)
+    sqlite3 (1.7.3-x86_64-linux)
     timeout (0.4.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
 
 PLATFORMS
+  arm64-darwin-23
   x86_64-linux
 
 DEPENDENCIES
@@ -75,7 +77,7 @@ DEPENDENCIES
   rspec (~> 3.5)
   single_cov
   soft_deletion!
-  sqlite3 (~> 1.4)
+  sqlite3 (~> 1.7)
 
 BUNDLED WITH
    2.4.21
