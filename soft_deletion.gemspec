@@ -8,8 +8,8 @@ Gem::Specification.new name, SoftDeletion::VERSION do |s|
   s.homepage = "https://github.com/grosser/#{name}"
   s.files = `git ls-files lib Readme.md`.split("\n")
   s.license = "MIT"
-  s.required_ruby_version = '>= 2.7.0'
-  s.add_runtime_dependency 'activerecord', '>= 5.0.0', '< 7.2'
+  s.required_ruby_version = '>= 3.0.0'
+  s.add_runtime_dependency 'activerecord', '>= 6.1.0', '< 7.3' # match .github/workflows/actions.yml
   s.add_development_dependency 'rake'
   s.add_development_dependency 'sqlite3'
   s.add_development_dependency 'rspec', '~> 3.5'

@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     soft_deletion (1.9.0)
-      activerecord (>= 5.0.0, < 7.2)
+      activerecord (>= 6.1.0, < 7.3)
 
 GEM
   remote: https://rubygems.org/
