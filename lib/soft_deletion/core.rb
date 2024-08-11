@@ -89,8 +89,7 @@ module SoftDeletion
     def update_soft_delete_counter_caches(value)
       each_counter_cached_associations do |association|
         association.load_target unless association.loaded?
-        if association.target
-          target = association.target
+        if (target = association.target) # uncovered TODO: add test coverage for target not existing
           target.class.update_counters(target.id, association.reflection.counter_cache_column => value)
         end
       end
@@ -115,7 +114,7 @@ module SoftDeletion
     end
 
     def _run_soft_undelete(&block)
-      raise "#{self.class} is not deleted" unless deleted_at
+      raise "#{self.class} is not deleted" unless deleted_at # uncovered TODO: add test coverage
 
       result = false
       limit = deleted_at - 1.hour
