@@ -1,5 +1,5 @@
 PATH
-  remote: .
+  remote: ..
   specs:
     soft_deletion (1.9.0)
       activerecord (>= 5.0.0, < 7.3)
@@ -32,43 +32,52 @@ GEM
     connection_pool (2.4.1)
     database_cleaner (2.0.2)
       database_cleaner-active_record (>= 2, < 3)
-    database_cleaner-active_record (2.1.0)
+    database_cleaner-active_record (2.2.0)
       activerecord (>= 5.a)
       database_cleaner-core (~> 2.0.0)
     database_cleaner-core (2.0.1)
-    diff-lcs (1.5.0)
+    diff-lcs (1.5.1)
     drb (2.2.1)
     i18n (1.14.5)
       concurrent-ruby (~> 1.0)
     logger (1.6.0)
-    mini_portile2 (2.8.7)
     minitest (5.24.1)
-    rake (13.1.0)
-    rspec (3.12.0)
-      rspec-core (~> 3.12.0)
-      rspec-expectations (~> 3.12.0)
-      rspec-mocks (~> 3.12.0)
-    rspec-core (3.12.2)
-      rspec-support (~> 3.12.0)
-    rspec-expectations (3.12.3)
+    rake (13.2.1)
+    rspec (3.13.0)
+      rspec-core (~> 3.13.0)
+      rspec-expectations (~> 3.13.0)
+      rspec-mocks (~> 3.13.0)
+    rspec-core (3.13.0)
+      rspec-support (~> 3.13.0)
+    rspec-expectations (3.13.1)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.12.0)
-    rspec-mocks (3.12.6)
+      rspec-support (~> 3.13.0)
+    rspec-mocks (3.13.1)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.12.0)
-    rspec-support (3.12.1)
+      rspec-support (~> 3.13.0)
+    rspec-support (3.13.1)
     securerandom (0.3.1)
     single_cov (1.11.0)
-    sqlite3 (1.7.3)
-      mini_portile2 (~> 2.8.0)
+    sqlite3 (1.7.3-aarch64-linux)
+    sqlite3 (1.7.3-arm-linux)
+    sqlite3 (1.7.3-arm64-darwin)
+    sqlite3 (1.7.3-x86-linux)
+    sqlite3 (1.7.3-x86_64-darwin)
+    sqlite3 (1.7.3-x86_64-linux)
     timeout (0.4.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
 
 PLATFORMS
-  ruby
+  aarch64-linux
+  arm-linux
+  arm64-darwin
+  x86-linux
+  x86_64-darwin
+  x86_64-linux
 
 DEPENDENCIES
+  activerecord (~> 7.2.0)
   bump
   byebug
   database_cleaner (>= 1.5.1)
@@ -76,7 +85,7 @@ DEPENDENCIES
   rspec (~> 3.5)
   single_cov
   soft_deletion!
-  sqlite3
+  sqlite3 (~> 1.4)
 
 BUNDLED WITH
-   2.3.12
+   2.5.15

@@ -86,12 +86,24 @@ module SoftDeletion
 
     protected
 
-    def update_soft_delete_counter_caches(value)
-      each_counter_cached_associations do |association|
-        association.load_target unless association.loaded?
-        if (target = association.target) # uncovered TODO: add test coverage for target not existing
-          target.class.update_counters(target.id, association.reflection.counter_cache_column => value)
+    if ActiveRecord.version >= Gem::Version.new("7.2.0")
+      def update_soft_delete_counter_caches(value) # uncovered NOTE: covered only at Rails >= 7.2.0 tests
+        counter_cached_association_names.each do |association_name| # uncovered
+          update_soft_delete_counter_cache(association(association_name), value) # uncovered
         end
+      end
+    else
+      def update_soft_delete_counter_caches(value) # uncovered NOTE: covered only at Rails < 7.2.0 tests
+        each_counter_cached_associations do |association| # uncovered
+          update_soft_delete_counter_cache(association, value) # uncovered
+        end
+      end
+    end
+
+    def update_soft_delete_counter_cache(association, value)
+      association.load_target unless association.loaded?
+      if (target = association.target) # uncovered TODO: add test coverage for target not existing
+        target.class.update_counters(target.id, association.reflection.counter_cache_column => value)
       end
     end
 
