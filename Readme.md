@@ -62,6 +62,7 @@ Authors
  - [Oliver Nightingale](https://github.com/olivernn)
  - [Kumar Pandya](https://github.com/kpandya91)
  - [Alex Pauly](https://github.com/apauly)
+ - [Yaroslav](https://github.com/viralpraxis)
 
 [Zendesk](http://zendesk.com)<br/>
 michael@grosser.it<br/>
