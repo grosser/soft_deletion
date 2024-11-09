@@ -9,7 +9,7 @@ Gem::Specification.new name, SoftDeletion::VERSION do |s|
   s.files = `git ls-files lib Readme.md`.split("\n")
   s.license = "MIT"
   s.required_ruby_version = '>= 2.7.0'
-  s.add_runtime_dependency 'activerecord', '>= 5.0.0', '< 7.3'
+  s.add_runtime_dependency 'activerecord', '>= 5.0.0', '< 8.1'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'sqlite3'
   s.add_development_dependency 'rspec', '~> 3.5'
