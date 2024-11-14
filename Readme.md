@@ -46,6 +46,23 @@ user.products.count == 10
 User.soft_delete_all!(1,2,3,4)
 ```
 
+To add the `deleted_at` to your model, you can either generate a migration using:
+
+```
+rails generate migration add_deleted_at_to_users deleted_at:datetime:index
+```
+
+or create a migration file yourself like:
+
+```Ruby
+class AddDeletedAtToUsers < ActiveRecord::Migration[6.0]
+  def change
+    add_column :users, :deleted_at, :datetime
+    add_index :users, :deleted_at
+  end
+end
+```
+
 TODO
 ====
  - has_many :through should delete join associations on soft_delete
