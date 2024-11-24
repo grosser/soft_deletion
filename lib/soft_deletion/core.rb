@@ -26,6 +26,10 @@ module SoftDeletion
         Thread.current[key] = nil
       end
 
+      def soft_deleted
+        with_deleted { where.not(deleted_at: nil) }
+      end
+
       def mark_as_soft_deleted_sql
         { deleted_at: Time.now }
       end
