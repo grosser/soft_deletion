@@ -44,6 +44,9 @@ user.products.count == 10
 
 # soft delete many
 User.soft_delete_all!(1,2,3,4)
+
+# get soft deleted records
+User.soft_deleted
 ```
 
 To add the `deleted_at` to your model, you can either generate a migration using:
