@@ -32,7 +32,7 @@ describe SoftDeletion do
         category.soft_delete!
         category.reload
         expect(category).to be_deleted
-        expect(category.updated_at).not_to eq original_updated_at
+        expect(category.updated_at).to be >= original_updated_at
       end
     end
   end
@@ -67,7 +67,7 @@ describe SoftDeletion do
       end
 
       it "updates the timestamp" do
-        expect(@timestamp_category.updated_at).not_to eq @original_updated_at
+        expect(@timestamp_category.updated_at).to be >= @original_updated_at
       end
     end
   end

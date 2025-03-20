@@ -33,7 +33,7 @@ module SoftDeletion
 
       def mark_as_soft_deleted_sql
         t = Time.now
-        if self.try(:soft_deletion_update_timestamp)
+        if self.soft_deletion_update_timestamp
           { deleted_at: t, updated_at: t }
         else
           { deleted_at: t }
@@ -68,11 +68,9 @@ module SoftDeletion
 
     def mark_as_deleted
       t = Time.now
-      if self.class.try(:soft_deletion_update_timestamp)
-        self.deleted_at ||= Time.now
+      self.deleted_at ||= t
+      if self.class.soft_deletion_update_timestamp
         self.updated_at = [self.deleted_at, self.updated_at].compact.max
-      else
-        self.deleted_at ||= Time.now
       end
     end
 
