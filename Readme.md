@@ -66,6 +66,17 @@ class AddDeletedAtToUsers < ActiveRecord::Migration[6.0]
 end
 ```
 
+By default `soft_deletion` does not change the `updated_at` value in the record. If you need this feature, you can use the `update_timestamp` option:
+
+```Ruby
+require 'soft_deletion'
+
+class User < ActiveRecord::Base
+  has_soft_deletion update_timestamp: true
+end
+```
+
+
 TODO
 ====
  - has_many :through should delete join associations on soft_delete

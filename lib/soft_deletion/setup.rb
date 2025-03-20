@@ -27,6 +27,8 @@ module SoftDeletion
             end
           end
         end
+
+        self.soft_deletion_update_timestamp = options[:update_timestamp]
       end
     end
   end

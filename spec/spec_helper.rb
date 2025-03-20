@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(:version => 1) do
 
   create_table :categories do |t|
     t.timestamp :deleted_at
+    t.timestamp :updated_at
   end
 
   create_table :original_categories do |t|
@@ -216,4 +217,10 @@ class CCCategory < ActiveRecord::Base
   has_soft_deletion
 
   has_many :forums, class_name: 'CCForum', primary_key: 'id', foreign_key: 'category_id'
+end
+
+class TimestampCategory  < ActiveRecord::Base
+  self.table_name = 'categories'
+
+  has_soft_deletion(update_timestamp: true)
 end
