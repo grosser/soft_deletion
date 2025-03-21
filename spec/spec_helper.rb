@@ -222,5 +222,5 @@ end
 class TimestampCategory  < ActiveRecord::Base
   self.table_name = 'categories'
 
-  has_soft_deletion(update_timestamp: true)
+  has_soft_deletion(update_timestamp: :updated_at)
 end
