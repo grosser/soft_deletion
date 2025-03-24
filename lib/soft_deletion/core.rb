@@ -9,6 +9,7 @@ module SoftDeletion
       base.define_model_callbacks :soft_delete
       base.define_model_callbacks :soft_undelete
       base.cattr_accessor :soft_delete_default_scope
+      base.cattr_accessor :soft_deletion_update_timestamp
     end
 
     module ClassMethods
@@ -31,7 +32,11 @@ module SoftDeletion
       end
 
       def mark_as_soft_deleted_sql
-        { deleted_at: Time.now }
+        t = Time.now
+
+        {deleted_at: t}.tap do |h|
+          h[self.soft_deletion_update_timestamp] = t if self.soft_deletion_update_timestamp
+        end
       end
 
       def soft_delete_all!(ids_or_models)
@@ -62,6 +67,11 @@ module SoftDeletion
 
     def mark_as_deleted
       self.deleted_at ||= Time.now
+      if self.class.soft_deletion_update_timestamp
+        new_timestamp = [self.deleted_at, send(self.class.soft_deletion_update_timestamp)].compact.max
+
+        send("#{self.class.soft_deletion_update_timestamp}=", new_timestamp)
+      end
     end
 
     def mark_as_undeleted

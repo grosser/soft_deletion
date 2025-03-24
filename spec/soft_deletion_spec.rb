@@ -22,6 +22,19 @@ describe SoftDeletion do
         expect(@forum).to be_deleted
       end
     end
+
+    context "with update_timestamp option" do
+      it "removes the record and updates the timestamp" do
+        original_updated_at = Time.now - 2.years
+        category = TimestampCategory.create!(updated_at: original_updated_at)
+        expect(category.updated_at.to_i).to eq original_updated_at.to_i
+
+        category.soft_delete!
+        category.reload
+        expect(category).to be_deleted
+        expect(category.updated_at.to_i).to be >= original_updated_at.to_i
+      end
+    end
   end
 
   def self.successfully_bulk_soft_deletes
@@ -38,6 +51,23 @@ describe SoftDeletion do
       it "soft deletes its dependent associations" do
         @forum.reload
         expect(@forum).to be_deleted
+      end
+    end
+
+    context "with update_timestamp option" do
+      before do
+        @original_updated_at = Time.now - 2.years
+        @timestamp_category = TimestampCategory.create!(updated_at: @original_updated_at)
+        TimestampCategory.soft_delete_all!(@timestamp_category)
+        @timestamp_category.reload
+      end
+
+      it "marks itself as deleted" do
+        expect(@timestamp_category).to be_deleted
+      end
+
+      it "updates the timestamp" do
+        expect(@timestamp_category.updated_at).to be >= @original_updated_at
       end
     end
   end
@@ -479,16 +509,26 @@ describe SoftDeletion do
     end
   end
 
-  context "default_scope" do
+  context "scopes" do
     let(:forum) { Cat2Forum.create!(deleted_at: Time.now) }
 
-    it "prevents find when deleted" do
-      expect(Cat2Forum.find_by_id(forum.id)).to be_nil
+    context "default_scope" do
+      it "prevents find when deleted" do
+        expect(Cat2Forum.find_by_id(forum.id)).to be_nil
+      end
+
+      it "can find without deleted" do
+        forum.update(deleted_at: nil)
+        expect(Cat2Forum.find_by_id(forum.id)).not_to be_nil
+      end
     end
 
-    it "can find without deleted" do
-      forum.update(deleted_at: nil)
-      expect(Cat2Forum.find_by_id(forum.id)).not_to be_nil
+    context ".soft_deleted scope" do
+      let(:forum) { Cat2Forum.create!(deleted_at: Time.now) }
+
+      it "finds the soft_deleted object with soft_deleted scope" do
+        expect(Cat2Forum.soft_deleted.find_by_id(forum.id)).not_to be_nil
+      end
     end
   end
 
