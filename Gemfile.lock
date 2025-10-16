@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    soft_deletion (1.13.0)
+    soft_deletion (1.13.1)
       activerecord (>= 5, < 8.2)
 
 GEM
